@@ -1029,8 +1029,7 @@ if __name__ == '__main__':
     # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED
     # res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED
     # res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED
-    #
-    # # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
+    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
     # res[6] = get_eth_curve_data() # Done; Fast API access
     # res[7] = get_eth_yfi_data() # Done; Fast API access
     # res[8] = get_eth_vesper_data() # Done; Fast API access
@@ -1039,17 +1038,19 @@ if __name__ == '__main__':
     # res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED;
     # res[12] = get_sc_venus_data() # Done; Fast API access
     # res[13] = get_sc_autofarm_data() # Done; Fast API access
-    # # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
-    # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED; VPN NEEDED
+    # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
+    # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED
     # res[16] = get_sc_belt_data() # Done; Browser NEEDED;
     # res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED
     # res[18] = get_sc_bake_data() # Done; METAMASK NEEDED
     # # res[19] = get_sc_smoothy_data(driver) # TODO: not yet
 
+    print(res[18])
+
     # 5.5mins
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    get_data_concurrently()
-    __import__('pudb').set_trace()
+    # get_data_concurrently()
+    # __import__('pudb').set_trace()
 
 

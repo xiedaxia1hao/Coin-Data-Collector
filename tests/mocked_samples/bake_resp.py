@@ -1,4 +1,4 @@
-BASE_RESP = [
+BAKE_RESP = [
     {
         "asset": "HYFI-BNB to HYFI",
         "deposit": "HYFI-BNB BLP",

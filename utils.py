@@ -19,14 +19,15 @@ THREAD_POOL = ThreadPool(MAX_THREAD_COUNT)
 def create_browser(webdriver_path='./chromedriver', show_browser=True, network_needed=None, b_id=-1):
     # create a selenium object that mimics the browser
     browser_options = Options()
+    user_data_dir = "./user_data/data_{}".format(b_id)
+    browser_options.add_argument('--no-sandbox')
+    browser_options.add_argument("--user-data-dir={}".format(user_data_dir))
+    browser_options.add_argument("--disable-dev-shm-usage")
+    # browser_options.add_argument("--remote-debugging-port=9222")
+
     # headless tag created an invisible browser
     if not show_browser:
         browser_options.add_argument("--headless")
-
-    user_data_dir = "./user_data/data_{}".format(b_id)
-    browser_options.add_argument("--user-data-dir={}".format(user_data_dir))
-    browser_options.add_argument("--disable-dev-shm-usage")
-    browser_options.add_argument('--no-sandbox')
 
     # add metamask extention
     # browser_options.add_extension('./nkbihfbeogaeaoehlefnkodbefgpgknn{}.crx'.format(b_id))

@@ -1,5 +1,8 @@
 import xlwt
 
+from constants import PANCAKESWAP_URL, VENUS_URL, AUTOFARM_URL, YFI_URL, ELLIPSIS_URL, LENDHUB_URL, HFI_URL, \
+    PANCAKEBUNNY_URL, BELT_URL, ALPACAFINANCE_URL, BAKE_URL, CURVE_TVL_URL, SUSHI_URL, VESPER_URL, MDEX_URL, FILDA_URL, \
+    COINWIND_URL
 from tests.mocked_samples.aplaca_resp import APLACA_RESP
 from tests.mocked_samples.autofarm_resp import AUTOFARM_RESP
 from tests.mocked_samples.bake_resp import BAKE_RESP
@@ -18,15 +21,24 @@ from tests.mocked_samples.vesper_resp import VESPER_RESP
 from tests.mocked_samples.yfi_resp import YFI_RESP
 from tests.mocked_samples.pancakeswap_resp import PANCAKESWAP_RESP
 
+HEADER_OFFSET = 4
 
-def write_ellipsis_data(data_excel, resp, name):
+
+def write_ellipsis_data(data_excel, res, name, link):
+
     data_sheet = data_excel.add_sheet(name)
+
+    resp = res.get('data', {})
+    tvl = res.get('tvl')
+
+    write_header(data_sheet=data_sheet, name=name, link=link, tvl=tvl, offset=5)
 
     # style
     style = xlwt.XFStyle()
     font = xlwt.Font()
     font.bold = True
     style.font = font
+
 
     if not resp:
         return
@@ -51,7 +63,10 @@ def write_ellipsis_data(data_excel, resp, name):
         i = i + 1
 
 
-def write_fyi_data(data_excel, resp, name):
+def write_fyi_data(data_excel, res, name, link):
+    resp = res.get('data', {})
+    tvl = res.get('tvl')
+
     data_sheet = data_excel.add_sheet(name)
 
     if not resp.get('v1_assets') and not resp.get('v2_assets'):
@@ -69,6 +84,8 @@ def write_fyi_data(data_excel, resp, name):
         title_keys = resp.get('v2_assets')[0].keys()
     else:
         title_keys = ['asset', 'version', 'growth', 'total_assets']
+
+    write_header(data_sheet=data_sheet, name=name, link=link, tvl=tvl, offset=len(title_keys)+1)
 
     for _, title in enumerate(title_keys):
         data_sheet.write(0, _, title, style=style)
@@ -92,8 +109,14 @@ def write_fyi_data(data_excel, resp, name):
         i = i + 1
 
 
-def write_lendhub_data(data_excel, resp, name):
+def write_lendhub_data(data_excel, res, name, link):
+
+    resp = res.get('data', {})
+    tvl = res.get('tvl')
+
     data_sheet = data_excel.add_sheet(name)
+
+    write_header(data_sheet=data_sheet, name=name, link=link, tvl=tvl, offset=10)
 
     if not resp:
         return
@@ -139,8 +162,11 @@ def write_lendhub_data(data_excel, resp, name):
         i = i + 1
 
 
-def write_generic_data(data_excel, resp, name, sorted_field=None):
+def write_generic_data(data_excel, res, name, link, sorted_field=None):
     data_sheet = data_excel.add_sheet(name)
+
+    resp = res.get('data', {})
+    tvl = res.get('tvl')
 
     if not resp:
         return
@@ -148,18 +174,24 @@ def write_generic_data(data_excel, resp, name, sorted_field=None):
     if sorted_field:
         resp.sort(key=lambda k:float(k.get(sorted_field).split('%')[0]), reverse=True)
 
+
     style = xlwt.XFStyle()
     font = xlwt.Font()
     font.bold = True
     style.font = font
 
-    # write the first row - title row
 
     title_keys = resp[0].keys()
-    for _, title in enumerate(title_keys):
-        data_sheet.write(0, _, title, style=style)
 
-    i = 1
+    write_header(data_sheet=data_sheet, name=name, link=link, tvl=tvl, offset=len(title_keys)+1)
+
+    i = 0
+
+    # write the first row - title row
+    for _, title in enumerate(title_keys):
+        data_sheet.write(i, _, title, style=style)
+
+    i = i + 1
 
     # write the content
     for row in resp:
@@ -170,9 +202,51 @@ def write_generic_data(data_excel, resp, name, sorted_field=None):
         i = i + 1
 
 
-def write_hfi_data(data_excel, resp, name, sorted_field=None):
+def get_header_style():
+
+    # font size: 20 -> height: 20 * 20
+    # if we need size 16, let it be 16 * 20
+    font = xlwt.Font()
+    font.bold = True
+    font.height = 20 * 20
+
+    # middle alignment
+    alignment = xlwt.Alignment()
+    alignment.horz = xlwt.Alignment.HORZ_CENTER
+    alignment.vert = xlwt.Alignment.VERT_CENTER
+
+    # borders
+    borders = xlwt.Borders()
+    borders.top = xlwt.Borders.THICK
+    borders.bottom = xlwt.Borders.THICK
+    borders.left = xlwt.Borders.THICK
+    borders.right = xlwt.Borders.THICK
+
+    # attach
+    style = xlwt.XFStyle()
+    style.font = font
+    style.alignment = alignment
+    style.borders = borders
+
+    return style
+
+
+def write_header(data_sheet, name, link, tvl, offset):
+
+    style = get_header_style()
+    data_sheet.write_merge(1, 5, offset, offset+4, xlwt.Formula('HYPERLINK("{}";"{}")'.format(link, name or 'Name: N/A')), style=style)
+    data_sheet.write_merge(6, 10, offset, offset+4, 'TVL: {}'.format(tvl or 'N/A'), style=style)
+
+
+def write_hfi_data(data_excel, res, name, link, sorted_field=None):
+
+    resp = res.get('data', {})
+    tvl = res.get('tvl', {})
 
     data_sheet = data_excel.add_sheet(name)
+
+    write_header(data_sheet=data_sheet, name=name, link=link, tvl=tvl, offset=4)
+
 
     if not resp:
         return
@@ -192,6 +266,7 @@ def write_hfi_data(data_excel, resp, name, sorted_field=None):
     # write the first row - title row
 
     title_keys = all_resp[0].keys()
+
     for _, title in enumerate(title_keys):
         data_sheet.write(0, _, title, style=style)
 
@@ -210,22 +285,22 @@ if __name__ == '__main__':
 
     data_excel = xlwt.Workbook()
 
-    write_generic_data(data_excel, PANCAKESWAP_RESP, 'PancakeSwap', "apr")
-    write_generic_data(data_excel, VENUS_RESP, 'Venus')
-    write_generic_data(data_excel, AUTOFARM_RESP, 'Autofarm', "APY")
-    write_ellipsis_data(data_excel, ELLIPSIS_RESP, 'Ellipsis')
-    write_generic_data(data_excel, PANCAKEBUNNY_RESP, 'Pancakebunny', "apy")
-    write_generic_data(data_excel, BELT_RESP, 'Belt')
-    write_generic_data(data_excel, APLACA_RESP, 'Aplaca', 'apy_u')
-    write_generic_data(data_excel, BAKE_RESP, 'Bake', 'roi')
-    write_generic_data(data_excel, CURVE_RESP, 'Curve', 'APY')
-    write_fyi_data(data_excel, YFI_RESP, 'YFI')
-    write_generic_data(data_excel, SUSHI_RESP, 'SUSHI', 'roi_year')
-    write_generic_data(data_excel, VESPER_RESP, 'Vesper')
-    write_generic_data(data_excel, MDEX_RESP, 'MDEX', 'APY')
-    write_generic_data(data_excel, FILDA_RESP, 'FILDA')
-    write_generic_data(data_excel, COINWIND_RESP, 'CoinWind', 'APY (Compound Interest)')
-    write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub')
-    write_hfi_data(data_excel, HFI_RESP, 'hecoFi', 'APY')
+    write_generic_data(data_excel, PANCAKESWAP_RESP, 'PancakeSwap', PANCAKESWAP_URL, sorted_field="apr")
+    write_generic_data(data_excel, VENUS_RESP, 'Venus', VENUS_URL)
+    write_generic_data(data_excel, AUTOFARM_RESP, 'Autofarm', AUTOFARM_URL, sorted_field="APY")
+    write_ellipsis_data(data_excel, ELLIPSIS_RESP, 'Ellipsis', ELLIPSIS_URL)
+    write_generic_data(data_excel, PANCAKEBUNNY_RESP, 'Pancakebunny', PANCAKEBUNNY_URL, sorted_field="apy")
+    write_generic_data(data_excel, BELT_RESP, 'Belt', BELT_URL)
+    write_generic_data(data_excel, APLACA_RESP, 'Aplaca', ALPACAFINANCE_URL, sorted_field='apy_u')
+    write_generic_data(data_excel, BAKE_RESP, 'Bake', BAKE_URL, sorted_field='roi')
+    write_generic_data(data_excel, CURVE_RESP, 'Curve', CURVE_TVL_URL, sorted_field='APY')
+    write_fyi_data(data_excel, YFI_RESP, 'YFI', YFI_URL)
+    write_generic_data(data_excel, SUSHI_RESP, 'SUSHI', SUSHI_URL, sorted_field='roi_year')
+    write_generic_data(data_excel, VESPER_RESP, 'Vesper', VESPER_URL)
+    write_generic_data(data_excel, MDEX_RESP, 'MDEX', MDEX_URL, sorted_field='APY')
+    write_generic_data(data_excel, FILDA_RESP, 'FILDA', FILDA_URL)
+    write_generic_data(data_excel, COINWIND_RESP, 'CoinWind', COINWIND_URL, sorted_field='APY (Compound Interest)')
+    write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub', LENDHUB_URL)
+    write_hfi_data(data_excel, HFI_RESP, 'hecoFi', HFI_URL, sorted_field='APY')
 
-    data_excel.save('demo.xls')
+    data_excel.save('test.xls')

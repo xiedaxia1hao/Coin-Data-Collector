@@ -1,142 +1,135 @@
-APLACA_RESP = [
-    {
-        "name": "CAKE-BNB",
-        "apy_u": "508.41%",
-        "apy_d": "143.45%",
-        "yield_farming": "317.62%",
-        "trading_fees": "41.00%",
-        "alpaca_rewards": "165.97%",
-        "borrowing_interest": "-16.18%",
-        "leverage": "2.5"
-    },
-    {
-        "name": "BTCB-BNB",
-        "apy_u": "391.65%",
-        "apy_d": "64.17%",
-        "yield_farming": "40.13%",
-        "trading_fees": "152.37%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "ETH-BNB",
-        "apy_u": "457.81%",
-        "apy_d": "86.22%",
-        "yield_farming": "69.96%",
-        "trading_fees": "188.70%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "DOT-BNB",
-        "apy_u": "369.97%",
-        "apy_d": "56.94%",
-        "yield_farming": "63.2%",
-        "trading_fees": "107.61%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "UNI-BNB",
-        "apy_u": "461.03%",
-        "apy_d": "87.29%",
-        "yield_farming": "164.97%",
-        "trading_fees": "96.90%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "LINK-BNB",
-        "apy_u": "405.31%",
-        "apy_d": "68.72%",
-        "yield_farming": "121.2%",
-        "trading_fees": "84.96%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "XVS-BNB",
-        "apy_u": "762.17%",
-        "apy_d": "187.67%",
-        "yield_farming": "275.08%",
-        "trading_fees": "287.94%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "YFI-BNB",
-        "apy_u": "377.5%",
-        "apy_d": "59.45%",
-        "yield_farming": "112.83%",
-        "trading_fees": "65.52%",
-        "alpaca_rewards": "221.29%",
-        "borrowing_interest": "-22.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "USDT-BUSD",
-        "apy_u": "-308.56%",
-        "apy_d": "34.94%",
-        "yield_farming": "82.85%",
-        "trading_fees": "126.78%",
-        "alpaca_rewards": "159.34%",
-        "borrowing_interest": "-677.53%",
-        "leverage": "6.0"
-    },
-    {
-        "name": "BNB-BUSD",
-        "apy_u": "650.21%",
-        "apy_d": "237.87%",
-        "yield_farming": "115.92%",
-        "trading_fees": "597.69%",
-        "alpaca_rewards": "63.73%",
-        "borrowing_interest": "-127.14%",
-        "leverage": "3.0"
-    },
-    {
-        "name": "VAI-BUSD",
-        "apy_u": "64.9%",
-        "apy_d": "52.9%",
-        "yield_farming": "129.09%",
-        "trading_fees": "82.52%",
-        "alpaca_rewards": "95.6%",
-        "borrowing_interest": "-242.32%",
-        "leverage": "4.0"
-    },
-    {
-        "name": "USDC-BUSD",
-        "apy_u": "45.11%",
-        "apy_d": "47.96%",
-        "yield_farming": "89.27%",
-        "trading_fees": "102.56%",
-        "alpaca_rewards": "95.6%",
-        "borrowing_interest": "-242.32%",
-        "leverage": "4.0"
-    },
-    {
-        "name": "DAI-BUSD",
-        "apy_u": "-6.57%",
-        "apy_d": "35.04%",
-        "yield_farming": "94.66%",
-        "trading_fees": "45.48%",
-        "alpaca_rewards": "95.6%",
-        "borrowing_interest": "-242.32%",
-        "leverage": "4.0"
-    },
-    {
-        "name": "UST-BUSD",
-        "apy_u": "102.95%",
-        "apy_d": "62.42%",
-        "yield_farming": "111.47%",
-        "trading_fees": "138.20%",
-        "alpaca_rewards": "95.6%",
-        "borrowing_interest": "-242.32%",
-        "leverage": "4.0"
-    }
-]
+APLACA_RESP = {
+    "data": [
+        {
+            "name": "CAKE-BNB",
+            "apy_u": "817.16%",
+            "apy_d": "137.34%",
+            "yield_farming": "641.23%",
+            "trading_fees": "37.96%",
+            "alpaca_rewards": "51.11%",
+            "borrowing_interest": "-25.99%",
+            "leverage": "2.5"
+        },
+        {
+            "name": "ETH-BNB",
+            "apy_u": "357.47%",
+            "apy_d": "71.65%",
+            "yield_farming": "85.78%",
+            "trading_fees": "146.39%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "DOT-BNB",
+            "apy_u": "318.81%",
+            "apy_d": "55.56%",
+            "yield_farming": "95.25%",
+            "trading_fees": "91.97%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "UNI-BNB",
+            "apy_u": "697.43%",
+            "apy_d": "90.16%",
+            "yield_farming": "328.56%",
+            "trading_fees": "83.99%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "LINK-BNB",
+            "apy_u": "573.53%",
+            "apy_d": "77.86%",
+            "yield_farming": "259.15%",
+            "trading_fees": "74.80%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "XVS-BNB",
+            "apy_u": "1210.0%",
+            "apy_d": "154.96%",
+            "yield_farming": "565.5%",
+            "trading_fees": "201.86%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "YFI-BNB",
+            "apy_u": "406.66%",
+            "apy_d": "58.48%",
+            "yield_farming": "167.81%",
+            "trading_fees": "59.26%",
+            "alpaca_rewards": "128.25%",
+            "borrowing_interest": "-36.08%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "USDT-BUSD",
+            "apy_u": "21.86%",
+            "apy_d": "33.9%",
+            "yield_farming": "128.66%",
+            "trading_fees": "115.01%",
+            "alpaca_rewards": "172.44%",
+            "borrowing_interest": "-9.02k%",
+            "leverage": "6.0"
+        },
+        {
+            "name": "BNB-BUSD",
+            "apy_u": "297.8%",
+            "apy_d": "150.44%",
+            "yield_farming": "180.29%",
+            "trading_fees": "328.81%",
+            "alpaca_rewards": "49.37%",
+            "borrowing_interest": "-508.25%",
+            "leverage": "3.0"
+        },
+        {
+            "name": "VAI-BUSD",
+            "apy_u": "23.04%",
+            "apy_d": "59.42%",
+            "yield_farming": "293.2%",
+            "trading_fees": "75.03%",
+            "alpaca_rewards": "82.52%",
+            "borrowing_interest": "-1.4k%",
+            "leverage": "4.0"
+        },
+        {
+            "name": "USDC-BUSD",
+            "apy_u": "21.43%",
+            "apy_d": "48.06%",
+            "yield_farming": "146.62%",
+            "trading_fees": "91.32%",
+            "alpaca_rewards": "82.52%",
+            "borrowing_interest": "-1.4k%",
+            "leverage": "4.0"
+        },
+        {
+            "name": "DAI-BUSD",
+            "apy_u": "-27.63%",
+            "apy_d": "35.13%",
+            "yield_farming": "139.77%",
+            "trading_fees": "43.10%",
+            "alpaca_rewards": "82.52%",
+            "borrowing_interest": "-1.4k%",
+            "leverage": "4.0"
+        },
+        {
+            "name": "UST-BUSD",
+            "apy_u": "57.61%",
+            "apy_d": "63.15%",
+            "yield_farming": "218.54%",
+            "trading_fees": "118.71%",
+            "alpaca_rewards": "82.52%",
+            "borrowing_interest": "-1.4k%",
+            "leverage": "4.0"
+        }
+    ],
+    "tvl": "$530,535,189.08"
+}

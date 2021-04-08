@@ -1,200 +1,203 @@
-CURVE_RESP = [
-    {
-        "pool": "usdt",
-        "APY": "6.68%",
-        "raw_volume": 49782.529019999994,
-        "formatted_volume": "$49.8K"
-    },
-    {
-        "pool": "y",
-        "APY": "7.26%",
-        "raw_volume": 1067856.639011941,
-        "formatted_volume": "$1.07M"
-    },
-    {
-        "pool": "busd",
-        "APY": "11.37%",
-        "raw_volume": 614201.0922571863,
-        "formatted_volume": "$614K"
-    },
-    {
-        "pool": "susd",
-        "APY": "0.46%",
-        "raw_volume": 10953750.724567924,
-        "formatted_volume": "$11M"
-    },
-    {
-        "pool": "pax",
-        "APY": "1.07%",
-        "raw_volume": 304951.62158188224,
-        "formatted_volume": "$305K"
-    },
-    {
-        "pool": "ren2",
-        "APY": "0.25%",
-        "raw_volume": 88.34026162500002,
-        "formatted_volume": "$88.3"
-    },
-    {
-        "pool": "rens",
-        "APY": "0.13%",
-        "raw_volume": 58.22485991962486,
-        "formatted_volume": "$58.2"
-    },
-    {
-        "pool": "hbtc",
-        "APY": "0.30%",
-        "raw_volume": 58.564720184830705,
-        "formatted_volume": "$58.6"
-    },
-    {
-        "pool": "3pool",
-        "APY": "0.60%",
-        "raw_volume": 46612041.040417634,
-        "formatted_volume": "$46.6M"
-    },
-    {
-        "pool": "gusd",
-        "APY": "0.54%",
-        "raw_volume": 659487.9840759685,
-        "formatted_volume": "$659K"
-    },
-    {
-        "pool": "husd",
-        "APY": "0.34%",
-        "raw_volume": 14986.744283,
-        "formatted_volume": "$15K"
-    },
-    {
-        "pool": "usdn",
-        "APY": "0.40%",
-        "raw_volume": 100063.38502633985,
-        "formatted_volume": "$100K"
-    },
-    {
-        "pool": "usdk",
-        "APY": "0.22%",
-        "raw_volume": 0,
-        "formatted_volume": "$0"
-    },
-    {
-        "pool": "linkusd",
-        "APY": "0.37%",
-        "raw_volume": 0,
-        "formatted_volume": "$0"
-    },
-    {
-        "pool": "musd",
-        "APY": "1.47%",
-        "raw_volume": 512639.60021128657,
-        "formatted_volume": "$513K"
-    },
-    {
-        "pool": "rsv",
-        "APY": "0.35%",
-        "raw_volume": 0,
-        "formatted_volume": "$0"
-    },
-    {
-        "pool": "tbtc",
-        "APY": "0.09%",
-        "raw_volume": 0.86066814,
-        "formatted_volume": "$0.861"
-    },
-    {
-        "pool": "dusd",
-        "APY": "0.36%",
-        "raw_volume": 107924.1532072456,
-        "formatted_volume": "$108K"
-    },
-    {
-        "pool": "pbtc",
-        "APY": "0.56%",
-        "raw_volume": 1.0878287061693894,
-        "formatted_volume": "$1.09"
-    },
-    {
-        "pool": "bbtc",
-        "APY": "0.30%",
-        "raw_volume": 20.786419316859075,
-        "formatted_volume": "$20.8"
-    },
-    {
-        "pool": "obtc",
-        "APY": "0.19%",
-        "raw_volume": 1.611361901029021,
-        "formatted_volume": "$1.61"
-    },
-    {
-        "pool": "ust",
-        "APY": "1.86%",
-        "raw_volume": 8019054.295739479,
-        "formatted_volume": "$8.02M"
-    },
-    {
-        "pool": "eurs",
-        "APY": "0.08%",
-        "raw_volume": 345400.3510375852,
-        "formatted_volume": "$345K"
-    },
-    {
-        "pool": "seth",
-        "APY": "0.10%",
-        "raw_volume": 774.0279549072316,
-        "formatted_volume": "$774"
-    },
-    {
-        "pool": "aave",
-        "APY": "9.34%",
-        "raw_volume": 1100667.6582516567,
-        "formatted_volume": "$1.1M"
-    },
-    {
-        "pool": "idle",
-        "APY": "9.83%",
-        "raw_volume": 0,
-        "formatted_volume": "$0"
-    },
-    {
-        "pool": "steth",
-        "APY": "3.95%",
-        "raw_volume": 406.5741449893288,
-        "formatted_volume": "$407"
-    },
-    {
-        "pool": "saave",
-        "APY": "8.72%",
-        "raw_volume": 498608.5363230548,
-        "formatted_volume": "$499K"
-    },
-    {
-        "pool": "ankreth",
-        "APY": "0.14%",
-        "raw_volume": 152.71664857801798,
-        "formatted_volume": "$153"
-    },
-    {
-        "pool": "ib",
-        "APY": "4.57%",
-        "raw_volume": 2156162.471757728,
-        "formatted_volume": "$2.16M"
-    },
-    {
-        "pool": "link",
-        "APY": "0.09%",
-        "raw_volume": 6094.029362203742,
-        "formatted_volume": "$6.09K"
-    },
-    {
-        "pool": "usdp",
-        "APY": "0.40%",
-        "raw_volume": 230660.05622341335,
-        "formatted_volume": "$231K"
-    },
-    {
-        "pool": "tusd",
-        "APY": "0.31%",
-        "raw_volume": 122646.32080762778,
-        "formatted_volume": "$123K"
-    }
-]
+CURVE_RESP = {
+    "data": [
+        {
+            "pool": "usdt",
+            "APY": "7.56%",
+            "raw_volume": 507083.3739798877,
+            "formatted_volume": "$507K"
+        },
+        {
+            "pool": "y",
+            "APY": "5.88%",
+            "raw_volume": 894724.6379530559,
+            "formatted_volume": "$895K"
+        },
+        {
+            "pool": "busd",
+            "APY": "8.62%",
+            "raw_volume": 2349283.609709411,
+            "formatted_volume": "$2.35M"
+        },
+        {
+            "pool": "susd",
+            "APY": "0.46%",
+            "raw_volume": 11033889.675823104,
+            "formatted_volume": "$11M"
+        },
+        {
+            "pool": "pax",
+            "APY": "1.39%",
+            "raw_volume": 728797.4401443535,
+            "formatted_volume": "$729K"
+        },
+        {
+            "pool": "ren2",
+            "APY": "0.93%",
+            "raw_volume": 309.84763746000004,
+            "formatted_volume": "$310"
+        },
+        {
+            "pool": "rens",
+            "APY": "0.41%",
+            "raw_volume": 198.45843551645137,
+            "formatted_volume": "$198"
+        },
+        {
+            "pool": "hbtc",
+            "APY": "0.71%",
+            "raw_volume": 204.41045225499997,
+            "formatted_volume": "$204"
+        },
+        {
+            "pool": "3pool",
+            "APY": "1.04%",
+            "raw_volume": 89206813.81534773,
+            "formatted_volume": "$89.2M"
+        },
+        {
+            "pool": "gusd",
+            "APY": "0.67%",
+            "raw_volume": 3724391.713989,
+            "formatted_volume": "$3.72M"
+        },
+        {
+            "pool": "husd",
+            "APY": "0.48%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "usdn",
+            "APY": "1.13%",
+            "raw_volume": 1696821.246968931,
+            "formatted_volume": "$1.7M"
+        },
+        {
+            "pool": "usdk",
+            "APY": "0.38%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "linkusd",
+            "APY": "0.63%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "musd",
+            "APY": "2.27%",
+            "raw_volume": 728616.3615155986,
+            "formatted_volume": "$729K"
+        },
+        {
+            "pool": "rsv",
+            "APY": "0.63%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "tbtc",
+            "APY": "0.29%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "dusd",
+            "APY": "0.61%",
+            "raw_volume": 130440.8820989862,
+            "formatted_volume": "$130K"
+        },
+        {
+            "pool": "pbtc",
+            "APY": "0.85%",
+            "raw_volume": 9.346303625000001,
+            "formatted_volume": "$9.35"
+        },
+        {
+            "pool": "bbtc",
+            "APY": "1.74%",
+            "raw_volume": 71.68134331499999,
+            "formatted_volume": "$71.7"
+        },
+        {
+            "pool": "obtc",
+            "APY": "0.85%",
+            "raw_volume": 0.19173053505356463,
+            "formatted_volume": "$0.192"
+        },
+        {
+            "pool": "ust",
+            "APY": "5.87%",
+            "raw_volume": 28413762.388963073,
+            "formatted_volume": "$28.4M"
+        },
+        {
+            "pool": "eurs",
+            "APY": "0.02%",
+            "raw_volume": 93125.6769063318,
+            "formatted_volume": "$93.1K"
+        },
+        {
+            "pool": "seth",
+            "APY": "0.23%",
+            "raw_volume": 21.115596094782795,
+            "formatted_volume": "$21.1"
+        },
+        {
+            "pool": "aave",
+            "APY": "7.65%",
+            "raw_volume": 2631131.2762072007,
+            "formatted_volume": "$2.63M"
+        },
+        {
+            "pool": "idle",
+            "APY": "7.27%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "steth",
+            "APY": "8.20%",
+            "raw_volume": 118.5312923241908,
+            "formatted_volume": "$119"
+        },
+        {
+            "pool": "saave",
+            "APY": "5.57%",
+            "raw_volume": 1120.7691065598806,
+            "formatted_volume": "$1.12K"
+        },
+        {
+            "pool": "ankreth",
+            "APY": "0.07%",
+            "raw_volume": 73.59290526572357,
+            "formatted_volume": "$73.6"
+        },
+        {
+            "pool": "ib",
+            "APY": "5.37%",
+            "raw_volume": 5598542.165208717,
+            "formatted_volume": "$5.6M"
+        },
+        {
+            "pool": "link",
+            "APY": "0.05%",
+            "raw_volume": 0,
+            "formatted_volume": "$0"
+        },
+        {
+            "pool": "usdp",
+            "APY": "0.73%",
+            "raw_volume": 1539353.5477527252,
+            "formatted_volume": "$1.54M"
+        },
+        {
+            "pool": "tusd",
+            "APY": "0.56%",
+            "raw_volume": 303816.01969571767,
+            "formatted_volume": "$304K"
+        }
+    ],
+    "tvl": "$5,240,332,623.57"
+}

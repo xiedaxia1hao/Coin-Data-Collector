@@ -1,57 +1,60 @@
-VESPER_RESP = [
-    {
-        "name": "vDAI",
-        "spot": "8.57%",
-        "avg": "7.97%",
-        "vsp_delta_spot": "0%",
-        "vsp_delta_avg": "0%",
-        "pool_deposits_U": "$150,327",
-        "pool_deposits_D": "150,237.7938 DAI",
-        "printed_spot": "8.57%",
-        "printed_avg": "7.97%"
-    },
-    {
-        "name": "vETH",
-        "spot": "1.6%",
-        "avg": "0.22%",
-        "vsp_delta_spot": "20.049999999999997%",
-        "vsp_delta_avg": "19.630000000000003%",
-        "pool_deposits_U": "$601,361,208",
-        "pool_deposits_D": "286,839.768 ETH",
-        "printed_spot": "21.65%",
-        "printed_avg": "19.85%"
-    },
-    {
-        "name": "vUSDC",
-        "spot": "8.16%",
-        "avg": "8.58%",
-        "vsp_delta_spot": "45.43000000000001%",
-        "vsp_delta_avg": "44.870000000000005%",
-        "pool_deposits_U": "$308,894,979",
-        "pool_deposits_D": "308,894,979.8048 USDC",
-        "printed_spot": "53.59%",
-        "printed_avg": "53.45%"
-    },
-    {
-        "name": "vVSP",
-        "spot": "46.98%",
-        "avg": "115.18%",
-        "vsp_delta_spot": "0%",
-        "vsp_delta_avg": "0%",
-        "pool_deposits_U": "$90,359,012",
-        "pool_deposits_D": "1,521,731.0007 VSP",
-        "printed_spot": "46.98%",
-        "printed_avg": "115.18%"
-    },
-    {
-        "name": "vWBTC",
-        "spot": "3.55%",
-        "avg": "0.47%",
-        "vsp_delta_spot": "22.95%",
-        "vsp_delta_avg": "22.07%",
-        "pool_deposits_U": "$538,563,479",
-        "pool_deposits_D": "9,390.2652 WBTC",
-        "printed_spot": "26.5%",
-        "printed_avg": "22.54%"
-    }
-]
+VESPER_RESP = {
+    "data": [
+        {
+            "name": "vDAI",
+            "spot": "12.04%",
+            "avg": "8.12%",
+            "vsp_delta_spot": "0%",
+            "vsp_delta_avg": "0%",
+            "pool_deposits_U": "$150,013",
+            "pool_deposits_D": "150,510.3764 DAI",
+            "printed_spot": "12.04%",
+            "printed_avg": "8.12%"
+        },
+        {
+            "name": "vETH",
+            "spot": "0.38%",
+            "avg": "0.23%",
+            "vsp_delta_spot": "19.650000000000002%",
+            "vsp_delta_avg": "19.47%",
+            "pool_deposits_U": "$567,196,467",
+            "pool_deposits_D": "285,734.384 ETH",
+            "printed_spot": "20.03%",
+            "printed_avg": "19.7%"
+        },
+        {
+            "name": "vUSDC",
+            "spot": "8.14%",
+            "avg": "8.17%",
+            "vsp_delta_spot": "41.66%",
+            "vsp_delta_avg": "41.05%",
+            "pool_deposits_U": "$311,068,730",
+            "pool_deposits_D": "311,068,730.9497 USDC",
+            "printed_spot": "49.8%",
+            "printed_avg": "49.22%"
+        },
+        {
+            "name": "vVSP",
+            "spot": "142.6%",
+            "avg": "100.58%",
+            "vsp_delta_spot": "0%",
+            "vsp_delta_avg": "0%",
+            "pool_deposits_U": "$84,826,389",
+            "pool_deposits_D": "1,526,432.0952 VSP",
+            "printed_spot": "142.6%",
+            "printed_avg": "100.58%"
+        },
+        {
+            "name": "vWBTC",
+            "spot": "0.74%",
+            "avg": "0.45%",
+            "vsp_delta_spot": "21.76%",
+            "vsp_delta_avg": "21.51%",
+            "pool_deposits_U": "$519,102,962",
+            "pool_deposits_D": "9,194.4021 WBTC",
+            "printed_spot": "22.5%",
+            "printed_avg": "21.96%"
+        }
+    ],
+    "tvl": "$1,482,344,564"
+}

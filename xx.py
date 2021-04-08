@@ -2,7 +2,7 @@ import time
 from copy import copy
 from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_URL, HFI_URL, CURVE_API_URL, \
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
-    ALPACAFINANCE_URL, BAKE_URL
+    ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
 from utils import create_browser, run_in_threads, human_format
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,6 +11,7 @@ import requests
 import json
 import traceback
 import logging
+import timeout_decorator
 logger = logging.getLogger(__name__)
 
 
@@ -23,7 +24,19 @@ def get_heco_mdex_data():
     try:
         driver = create_browser(b_id=1)
         driver.get(MDEX_URL)
+        main_window_handle = driver.current_window_handle
         wait = WebDriverWait(driver, 10)
+
+        try:
+            connect_metamask_v2(driver)
+        except Exception as e:
+            print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+        # Switch back to main tab
+        driver.switch_to.window(main_window_handle)
+
         table = \
             wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id=\"app\"]/section/div[2]/div[2]/div/div[3]/table")))
         rows = table.find_elements(By.TAG_NAME, "tr")
@@ -44,21 +57,36 @@ def get_heco_mdex_data():
                         }
                     )
             except Exception as e:
-                print("get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                logger.error("get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return res
+                print("get_heco_mdex_data get_row_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                logger.error("get_heco_mdex_data get_row_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+        # get tvl
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"app\"]/section/div[1]/div[2]/div[1]/div").find_element(By.TAG_NAME, 'span').text
+        except Exception as e:
+            print("get_heco_mdex_data get tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error("get_heco_mdex_data get tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            tvl = None
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_venus_data():
     try:
         resp = json.loads(requests.get(VENUS_API_URL).content)
         res = []
+        tvl = 0
         for row in resp.get('data', {}).get('markets', {}):
             try:
                 res.append(
@@ -74,17 +102,24 @@ def get_sc_venus_data():
                         'price': "${}".format(human_format(float(row.get('tokenPrice', 0))))
                     }
                 )
+                tvl += float(row.get('totalSupplyUsd'))
             except Exception as e:
                 print("get_sc_venus_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 logger.error(
                     "get_sc_venus_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+        return {
+            'data': res,
+            'tvl': '${:,}'.format(round(tvl, 2))
+        }
     except Exception as e:
         print("get_sc_venus_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_sc_venus_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
 
 
 def get_heco_coinwind_data():
@@ -131,13 +166,26 @@ def get_heco_coinwind_data():
                 print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[1]/div[3]/div[1]/div[2]").text
+        except Exception as e:
+            tvl = None
+            print("get_heco_coinwind_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_heco_coinwind_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': tvl
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_heco_filda_data():
@@ -192,13 +240,28 @@ def get_heco_filda_data():
             except Exception as e:
                 print("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 logger.error("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return res
+
+        try:
+            tvl_placeholder = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[2]/div[2]/div[3]/div/div[2]").text
+            tvl = tvl_placeholder[tvl_placeholder.index('$')-1:] or tvl_placeholder
+        except Exception as e:
+            tvl = None
+            print("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': tvl
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def connect_metamask_v2(driver):
@@ -337,18 +400,42 @@ def get_heco_lendhub_data():
                         logger.error("get_heco_lendhub_data error:{}.{}.{}".format(e.__class__.__name__, e,
                                                                                    traceback.format_exc()))
                         continue
+
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"__layout\"]/div/div[2]/div[1]/div/div[1]/div/ul/li[2]/p").text
+        except Exception as e:
+            print("get_heco_lendhub_data tvl error:{}.{}.{}".format(e.__class__.__name__, e,
+                                                                traceback.format_exc()))
+            logger.error("get_heco_lendhub_data tvl error:{}.{}.{}".format(e.__class__.__name__, e,
+                                                                       traceback.format_exc()))
+            tvl = None
         return {
-            "lp_market_res": lp_market_res,
-            "single_market_res": single_market_res
+            'data': {
+                "lp_market_res": lp_market_res,
+                "single_market_res": single_market_res
+            },
+            'tvl': tvl
         }
     except Exception as e:
         print("get_heco_lendhub_data error:{}.{}.{}".format(e.__class__.__name__, e,
                                                             traceback.format_exc()))
         logger.error("get_heco_lendhub_data error:{}.{}.{}".format(e.__class__.__name__, e,
                                                                    traceback.format_exc()))
-        return {}
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
+
+
+def is_valid_hfi_data(res):
+    for k, v in res.items():
+        for row in v:
+            for _k, _v in row.items():
+                if _v == '--':
+                    return False
+    return True
 
 
 def get_heco_hfi_data():
@@ -369,46 +456,81 @@ def get_heco_hfi_data():
         WebDriverWait(driver, 5).until(EC.presence_of_element_located(
             (By.XPATH, "//div[contains(@class, 'coin-category')]")))
 
-        coin_categories = driver.find_elements(By.XPATH, "//div[contains(@class, 'coin-category')]")
-        coin_lists = driver.find_elements(By.XPATH, "//div[contains(@class, 'coin-list')]")
+        for rep in range(10):
+            coin_categories = driver.find_elements(By.XPATH, "//div[contains(@class, 'coin-category')]")
+            coin_lists = driver.find_elements(By.XPATH, "//div[contains(@class, 'coin-list')]")
+            res = {}
 
-        res = {}
+            for i in range(min(len(coin_categories), len(coin_lists))):
+                try:
+                    coin_category = coin_categories[i]
+                    coin_list = coin_lists[i]
 
-        for i in range(min(len(coin_categories), len(coin_lists))):
-            try:
-                coin_category = coin_categories[i]
-                coin_list = coin_lists[i]
+                    title = str.splitlines(coin_category.text)[0]
 
-                title = str.splitlines(coin_category.text)[0]
+                    coin_boxs = coin_list.find_elements(By.CLASS_NAME, "coin-box")
+                    for coin_box in coin_boxs:
+                        coin_info = coin_box.find_elements(By.CSS_SELECTOR, ".flex-all")
+                        name = coin_info[0].text.replace('\n', ' ')
+                        apy = str.splitlines(coin_info[1].text)[1]
+                        total = str.splitlines(coin_info[2].text)[1]
+                        res.setdefault(title, []).append(
+                            {
+                                'name': name,
+                                'APY': apy,
+                                'total': total
+                            }
+                        )
+                except Exception as e:
+                    print("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    logger.error("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            if is_valid_hfi_data(res):
+                break
+            else:
+                time.sleep(1)
+                continue
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"__layout\"]/div/div/div[1]/div[2]/div/p[1]/span[2]").text
+        except Exception as e:
+            tvl = None
+            print("get_heco_hfi_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error("get_heco_hfi_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
-                coin_boxs = coin_list.find_elements(By.CLASS_NAME, "coin-box")
-                for coin_box in coin_boxs:
-                    coin_info = coin_box.find_elements(By.CSS_SELECTOR, ".flex-all")
-                    name = coin_info[0].text.replace('\n', ' ')
-                    apy = str.splitlines(coin_info[1].text)[1]
-                    total = str.splitlines(coin_info[2].text)[1]
-                    res.setdefault(title, []).append(
-                        {
-                            'name': name,
-                            'APY': apy,
-                            'total': total
-                        }
-                    )
-            except Exception as e:
-                print("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                logger.error("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-
-        return res
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_heco_hfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return {}
+        return {
+            'data': {},
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_eth_curve_data():
     try:
+        try:
+            driver = create_browser(b_id=13)
+            driver.get(CURVE_TVL_URL)
+            # click close choose wallet button
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+                (By.XPATH, "/html/body/aside/section/div[2]"))).click()
+
+            time.sleep(2)
+
+            # find the tvl place
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"total-balances\"]/span")))
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"total-balances\"]/span").text
+        except Exception as e:
+            print("get_eth_curve_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_eth_curve_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            tvl = None
         resp = json.loads(requests.get(CURVE_API_URL).content)
         all_listed_pools = resp.get('apy', {}).get('day', {}).keys()
         res = []
@@ -432,12 +554,18 @@ def get_eth_curve_data():
                 print("get_eth_curve_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 logger.error(
                     "get_eth_curve_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return res
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_eth_curve_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_eth_curve_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
 
 
 def get_eth_yfi_data():
@@ -445,19 +573,21 @@ def get_eth_yfi_data():
         resp = json.loads(requests.get(YFI_API_URL).content)
         v1_res = []
         v2_res = []
+        tvl = 0
         for asset_info in resp:
             try:
                 display_name = asset_info.get('displayName')
                 version = asset_info.get('type')
                 growth = asset_info.get('apy', {}).get('recommended', 'N/A')
                 total_assets = asset_info.get('tvl', {}).get('value', 'N/A')
+                tvl += float(total_assets) if total_assets != 'N/A' else 0
                 if version == 'v1':
                     v1_res.append(
                         {
                             'asset': display_name,
                             'version': version,
                             'growth': "{:.2%}".format(growth),
-                            'total_assets': "${:,}".format(float(total_assets)) if total_assets != 'N/A' else total_assets
+                            'total_assets': "${:,.2f}".format(float(total_assets)) if total_assets != 'N/A' else total_assets
                         }
                     )
                 if version == 'v2':
@@ -466,7 +596,7 @@ def get_eth_yfi_data():
                             'asset': display_name,
                             'version': version,
                             'growth': "{:.2%}".format(growth),
-                            'total_assets': "${:,}".format(float(total_assets)) if total_assets != 'N/A' else total_assets
+                            'total_assets': "${:,.2f}".format(float(total_assets)) if total_assets != 'N/A' else total_assets
                         }
                     )
             except Exception as e:
@@ -474,19 +604,26 @@ def get_eth_yfi_data():
                 logger.error("get_eth_yfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
         return {
-            'v1_assets': v1_res,
-            'v2_assets': v2_res
+            'data': {
+                'v1_assets': v1_res,
+                'v2_assets': v2_res
+            },
+            'tvl': "${:,.2f}".format(tvl)
         }
     except Exception as e:
         print("get_eth_yfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_eth_yfi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return {}
+        return {
+            'data': {},
+            'tvl': None
+        }
 
 
 def get_eth_vesper_data():
     try:
         resp = json.loads(requests.get(VESPER_API_URL).content)
         res = []
+        tvl = 0
 
         for pool in resp:
             try:
@@ -495,6 +632,7 @@ def get_eth_vesper_data():
                 symbol = pool.get('asset', {}).get('symbol')
                 price = pool.get('asset', {}).get('price', 1)
                 pool_deposits_U = pool_deposits_D * price
+                tvl += pool_deposits_U
                 pool_info = {
                     'name': pool.get('name'),
                     'spot': "{}%".format(pool.get('earningRates', {}).get('1')),
@@ -520,12 +658,18 @@ def get_eth_vesper_data():
                 logger.error(
                     "get_eth_vesper_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             res.append(pool_info)
-        return res
+        return {
+            'data': res,
+            'tvl': "${:,}".format(int(tvl))
+        }
     except Exception as e:
         print("get_eth_vesper_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_eth_vesper_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
 
 
 def get_eth_sushi_data():
@@ -568,14 +712,35 @@ def get_eth_sushi_data():
                 logger.error(
                     "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+        try:
+            driver.get(SUSHI_TVL_URL)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div")))
+            _tvl = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div").text
+            _useless_percentage = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div/span").text
+            try:
+                tvl = _tvl[:_tvl.index(_useless_percentage)]
+            except Exception as e:
+                tvl = _tvl
+        except Exception as e:
+            tvl = None
+            print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return {}
+        return {
+            'data': {},
+            'tvl': tvl
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 # TODO: wait till Ziyue figure out how to handle APY
@@ -617,14 +782,30 @@ def get_sc_pancakeswap_data():
                 logger.error(
                     "get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+        try:
+            driver.get(PANCAKESWAP_TVL_URL)
+            WebDriverWait(driver, 2).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]")))
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]").text
+        except Exception as e:
+            tvl = None
+            print("get_sc_pancakeswap_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_sc_pancakeswap_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_autofarm_data():
@@ -632,11 +813,13 @@ def get_sc_autofarm_data():
         resp = json.loads(requests.get(AUTOFARM_API_URL).content)
         pools = resp.get('pools', {})
         res = []
+        tvl = 0
         for row in resp.get('table_data', {}):
             try:
                 token_id = row[0]
                 token_pool = pools.get(str(token_id), {})
                 daily_apr = round(token_pool.get('APR', 0) / 365.0 * 100, 2)
+                tvl += row[4]
                 res.append(
                     {
                         'token': row[2],
@@ -649,18 +832,24 @@ def get_sc_autofarm_data():
                 print("get_sc_autofarm_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 logger.error(
                     "get_sc_autofarm_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return res
+        return {
+            'data': res,
+            'tvl': '${:,}'.format(int(tvl))
+        }
     except Exception as e:
         print("get_sc_autofarm_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_sc_autofarm_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
 
 
 def is_valid_sc_ellipsis_data(res):
-    return (res.get('pool', {}).get('rewards_apy') == '' and res.get('pool', {}).get('base_apy' == '%') and res.get('pool', {}).get('volume') == '') \
-                    or (res.get('EPS/BNB_staking_apy') == '0' and res.get('3pool_lp_token_apy') == '0') \
-                    or (res.get('EPS_unlocked_apy') == '0% in BUSD\nLocked APY' and res.get('EPS_locked_apy') == '0% in EPS + 0% in BUSD')
+    return (res.get('pool', {}).get('rewards_apy') == '' and res.get('pool', {}).get('base_apy') == '%' and res.get('pool', {}).get('volume') == '') \
+                    and (res.get('EPS/BNB_staking_apy') == '0' and res.get('3pool_lp_token_apy') == '0') \
+                    and (res.get('EPS_unlocked_apy') == '0% in BUSD\nLocked APY' and res.get('EPS_locked_apy') == '0% in EPS + 0% in BUSD')
 
 
 def get_sc_ellipsis_data():
@@ -678,11 +867,11 @@ def get_sc_ellipsis_data():
 
         driver.switch_to.window(main_window_handle)
         time.sleep(8)
-        tables = driver.find_elements(By.TAG_NAME, 'fieldset')
 
-        # max retry times: 10
-        for i in range(10):
+        # max retry times: 5
+        for i in range(5):
             res = {}
+            tables = driver.find_elements(By.TAG_NAME, 'fieldset')
             for table in tables:
                 legend_names = table.find_elements(By.TAG_NAME, 'legend')
                 for legend_name in legend_names:
@@ -723,17 +912,29 @@ def get_sc_ellipsis_data():
                             res['EPS_locked_apy'] = 'N/A'
 
             # if invalid output, we try to get the data again
-            if is_valid_sc_ellipsis_data(res):
-                time.sleep(3)
+            if not is_valid_sc_ellipsis_data(res):
+                time.sleep(2)
             else:
                 break
-        return res
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"total-balances\"]/span").text
+        except Exception as e:
+            tvl = None
+            print("get_sc_ellipsis_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error("get_sc_ellipsis_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl,
+        }
     except Exception as e:
         print("get_sc_ellipsis_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_sc_ellipsis_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return {}
+        return {
+            'data': {},
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_pancakebunny_data():
@@ -791,13 +992,27 @@ def get_sc_pancakebunny_data():
                         print("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                         logger.error(
                             "get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return res
+
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[3]/div[1]/div[1]/div/div/div/div[1]/div[1]/span[1]").text
+        except Exception as e:
+            print("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            tvl = None
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_belt_data():
@@ -841,14 +1056,39 @@ def get_sc_belt_data():
                 logger.error(
                     "get_sc_belt_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+
+        try:
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"router-wrapper\"]/div[2]/div[2]/div[2]/span[2]").text
+        except Exception as e:
+            tvl = None
+            print("get_sc_belt_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_sc_belt_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_sc_belt_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_sc_belt_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
+
+
+def convert_valid_aplaca_data(apy):
+    try:
+        split_list = apy.split('%')
+        str_num = split_list[0]
+        if str_num.endswith('k'):
+            str_num = float(str_num[:-1]) * 1000
+        return '{}%'.format(str(str_num))
+    except Exception as e:
+        return apy
 
 
 def get_sc_aplaca_data():
@@ -874,8 +1114,7 @@ def get_sc_aplaca_data():
             logger.error("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-        time.sleep(8)
-
+        time.sleep(5)
 
         table = driver.find_element(By.TAG_NAME, 'tbody')
         rows = table.find_elements(By.TAG_NAME, 'tr')
@@ -888,8 +1127,8 @@ def get_sc_aplaca_data():
             try:
                 cols = row.find_elements(By.TAG_NAME, 'td')
                 name = str.splitlines(cols[1].text)[1]
-                apy_u = str.splitlines(cols[2].text)[0]
-                apy_d = str.splitlines(cols[2].text)[1]
+                apy_u = convert_valid_aplaca_data(str.splitlines(cols[2].text)[0])
+                apy_d = convert_valid_aplaca_data(str.splitlines(cols[2].text)[1])
                 yield_farming = str.splitlines(cols[3].text)[1]
                 trading_fees = str.splitlines(cols[3].text)[3]
                 alpaca_rewards = str.splitlines(cols[3].text)[5]
@@ -912,13 +1151,30 @@ def get_sc_aplaca_data():
                 logger.error(
                     "get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        return res
+
+        try:
+            driver.get(ALPACAFINANCE_TVL_URL)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span"))).click()
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span").text
+        except Exception as e:
+            tvl = None
+            print("get_sc_aplaca_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_sc_aplaca_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_bake_data():
@@ -976,81 +1232,141 @@ def get_sc_bake_data():
             else:
                 time.sleep(1)
                 continue
-        return res
+
+        try:
+            driver.get(BAKE_TVL_URL)
+            time.sleep(3)
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span"))).click()
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span").text
+        except Exception as e:
+            tvl = None
+            print("get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': res,
+            'tvl': tvl
+        }
     except Exception as e:
         print("get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         logger.error(
             "get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        return []
+        return {
+            'data': [],
+            'tvl': None
+        }
     finally:
-        driver.close()
+        driver.quit()
 
 
 def get_sc_smoothy_data(driver):
     pass
 
 
-def get_data_concurrently():
-    start_time = time.time()
-    result = {}
-    task_list = [
-        (get_heco_mdex_data, ()),
-        (get_heco_filda_data, ()),
-        (get_heco_coinwind_data, ()),
-        (get_heco_lendhub_data, ()),
-        # (get_heco_hfi_data, ()), # FIX VPN
-        (get_eth_curve_data, ()),
-        (get_eth_yfi_data, ()),
-        (get_eth_vesper_data, ()),
-        (get_eth_sushi_data, ()),
-        # (get_eth_uniswap_data, ()), # TODO
-        (get_sc_pancakeswap_data, ()),
-        (get_sc_venus_data, ()),
-        (get_sc_autofarm_data, ()),
-        # (get_sc_ellipsis_data, ()), # AA VPN CANNOT WORKING?
-        (get_sc_pancakebunny_data, ()), # TODO: ????? WTF
-        (get_sc_belt_data, ()),
-        (get_sc_aplaca_data, ()),
-        (get_sc_bake_data, ()) # TODO: ????? WTF
-    ]
+def get_task_needed(return_values):
+    task_needed = []
+    for i, row in enumerate(return_values):
+        if not row:
+            task_needed.append(i)
+    return task_needed
+
+
+def get_data_concurrently(task_list):
+    # task_list = [
+    #     (get_heco_mdex_data, ()),
+    #     (get_heco_filda_data, ()),
+    #     (get_heco_coinwind_data, ()),
+    #     (get_heco_lendhub_data, ()),
+    #     (get_heco_hfi_data, ()),
+    #     (get_eth_curve_data, ()), # API
+    #     (get_eth_yfi_data, ()), # API
+    #     (get_eth_vesper_data, ()), # API
+    #     (get_eth_sushi_data, ()),
+    #     # (get_eth_uniswap_data, ()), # TODO
+    #     (get_sc_pancakeswap_data, ()),
+    #     (get_sc_venus_data, ()),
+    #     (get_sc_autofarm_data, ()),
+    #     (get_sc_ellipsis_data, ()), # AA VPN CANNOT WORKING?
+    #     (get_sc_pancakebunny_data, ()), # TODO: ????? WTF
+    #     (get_sc_belt_data, ()),
+    #     (get_sc_aplaca_data, ()),
+    #     (get_sc_bake_data, ()) # TODO: ????? WTF
+    # ]
     return_values = run_in_threads(task_list)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    __import__('pudb').set_trace()
-    result['mdex_data'] = return_values[0]
 
-    return return_values[0]
+    task_needed = get_task_needed(return_values)
+    while task_needed:
+        new_task_list = [task_list[task_index] for task_index in task_needed]
+        new_return_values = run_in_threads(new_task_list)
+        for task_index in task_needed:
+            return_values[task_index] = new_return_values[task_needed.index(task_index)]
+        task_needed = get_task_needed(return_values)
 
+    return return_values
 
-if __name__ == '__main__':
-    # driver = create_browser(webdriver_path='./chromedriver', show_browser=True, network_needed='sc')
+def get_data():
+    TASK_LIST_BY_POOL = {
+        'heco': [
+            (get_heco_mdex_data, ()),
+            (get_heco_filda_data, ()),
+            (get_heco_coinwind_data, ()),
+            (get_heco_lendhub_data, ()),
+            (get_heco_hfi_data, ()),
+        ],
+        'eth': [
+            (get_eth_curve_data, ()),  # API
+            (get_eth_yfi_data, ()),  # API
+            (get_eth_vesper_data, ()),  # API
+            # (get_eth_uniswap_data, ()), # TODO
+            (get_sc_venus_data, ()),
+            (get_sc_autofarm_data, ()),
+        ],
+        'sc': [
+            (get_eth_sushi_data, ()),  # let's see
+            (get_sc_pancakeswap_data, ()),
+            (get_sc_ellipsis_data, ()),  # AA VPN CANNOT WORKING?
+            (get_sc_pancakebunny_data, ()),  # TODO: ????? WTF
+            (get_sc_belt_data, ()),
+            (get_sc_aplaca_data, ()),
+            (get_sc_bake_data, ())  # TODO: ????? WTF
+        ]
+    }
+
     start_time = time.time()
     res = {}
+
     # res[1] = get_heco_mdex_data() # Done; Browser NEEDED
-    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED
+    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED;
     # res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED
     # res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED
-    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
-    # res[6] = get_eth_curve_data() # Done; Fast API access
-    # res[7] = get_eth_yfi_data() # Done; Fast API access
+    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED;
+    # res[6] = get_eth_curve_data() # Done; Browser Needed and Fast API access;
+    # res[7] = get_eth_yfi_data() # Done; Fast API access;
     # res[8] = get_eth_vesper_data() # Done; Fast API access
     # res[9] = get_eth_sushi_data() # Done; Browser NEEDED; No METAMASK NEEDED;
-    # # res[10] = get_eth_uniswap_data() # TODO: wait till ziyue
     # res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED;
     # res[12] = get_sc_venus_data() # Done; Fast API access
     # res[13] = get_sc_autofarm_data() # Done; Fast API access
     # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
     # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED
     # res[16] = get_sc_belt_data() # Done; Browser NEEDED;
-    # res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED
+    res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED
     # res[18] = get_sc_bake_data() # Done; METAMASK NEEDED
-    # # res[19] = get_sc_smoothy_data(driver) # TODO: not yet
 
-    print(res[18])
+    print(res[17])
+    __import__('pudb').set_trace()
 
     # 5.5mins
+
+    res['heco'] = get_data_concurrently(TASK_LIST_BY_POOL.get('heco'))
+    res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
+    res['sc'] = get_data_concurrently(TASK_LIST_BY_POOL.get('sc'))
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    # get_data_concurrently()
-    # __import__('pudb').set_trace()
+
+if __name__ == '__main__':
+    get_data()
+    __import__('pudb').set_trace()
 
 

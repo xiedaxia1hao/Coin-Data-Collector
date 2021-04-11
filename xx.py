@@ -1,8 +1,15 @@
 import time
 from copy import copy
+
+from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.keys import Keys
+from joblib import Parallel, delayed
+
 from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_URL, HFI_URL, CURVE_API_URL, \
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
     ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
+from excel_generator import write_excel
 from utils import create_browser, run_in_threads, human_format
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,11 +28,12 @@ def is_valid_mdex_row(items):
 
 # Browser Needed
 def get_heco_mdex_data():
+    driver = create_browser(b_id=1)
     try:
-        driver = create_browser(b_id=1)
+        print(type(driver))
+        print(isinstance(driver, WebDriver))
         driver.get(MDEX_URL)
         main_window_handle = driver.current_window_handle
-        wait = WebDriverWait(driver, 10)
 
         try:
             connect_metamask_v2(driver)
@@ -37,8 +45,11 @@ def get_heco_mdex_data():
         # Switch back to main tab
         driver.switch_to.window(main_window_handle)
 
-        table = \
-            wait.until(EC.presence_of_element_located((By.XPATH, "//*[@id=\"app\"]/section/div[2]/div[2]/div/div[3]/table")))
+        WebDriverWait(driver, 6).until(EC.presence_of_element_located(
+            (By.XPATH,  "//*[@id=\"app\"]/section/div[2]/div[2]/div/div[3]/table")))
+
+        table = driver.find_element(By.XPATH, "//*[@id=\"app\"]/section/div[2]/div[2]/div/div[3]/table")
+
         rows = table.find_elements(By.TAG_NAME, "tr")
         res = []
 
@@ -79,7 +90,8 @@ def get_heco_mdex_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_sc_venus_data():
@@ -122,50 +134,68 @@ def get_sc_venus_data():
         }
 
 
+def is_valid_coinwind_data(res):
+    check_all_apy_validity = [_v == '0.00%' for row in res for _k, _v in row.items() if _k == 'APY (Compound Interest)']
+    count_invalid_apy_num = sum(check_all_apy_validity)
+    invalid_apy_percentage = count_invalid_apy_num * 1.0 / len(check_all_apy_validity) if len(check_all_apy_validity) > 0 else 0
+    if invalid_apy_percentage > 0.2:
+        return False
+    return True
+
+
 def get_heco_coinwind_data():
+    driver = create_browser(network_needed='heco', b_id=3)
     try:
-        driver = create_browser(network_needed='heco', b_id=3)
         driver.get(COINWIND_URL)
 
         main_window_handle = driver.current_window_handle
 
         try:
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 4).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"WEB3_CONNECT_MODAL_ID\"]/div/div/div[2]/div[1]/div"))).click()
             connect_metamask_v2(driver)
+        except ElementNotVisibleException as e:
+            pass
         except Exception as e:
             print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         # Switch back to main tab
         driver.switch_to.window(main_window_handle)
-        time.sleep(5)
-        rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")
-        rows = copy(rows)
-        res = []
-        for i, row in enumerate(rows):
-            try:
-                # Sample row.text:
-                # 'MDX\nStore MDX MDX\n0.0000\nEarned (MDX)\n108.34%\nAPY(Compound Interest)\n\n\n\n28,705,423.78\nVL (MDX)'
-                items = str.splitlines(row.text)
-                cols = row.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-align-items-xs-center')]")
-                earned_mdx = str.splitlines(cols[3*i].text)[0]
-                apy = str.splitlines(cols[3*i+1].text)[0]
-                vl_value = str.splitlines(cols[3*i+2].text)[0]
-                vl_name = str.splitlines(cols[3*i+2].text)[1]
-                res.append(
-                    {
-                        'Assets U': items[0],
-                        'Assets D': items[1],
-                        'Earned (MDX)': earned_mdx,
-                        'APY (Compound Interest)': apy,
-                        vl_name: vl_value
-                    }
-                )
-            except Exception as e:
-                print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                continue
+
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")))
+        for _ in range(10):
+            rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")
+            rows = copy(rows)
+            res = []
+            for i, row in enumerate(rows):
+                try:
+                    # Sample row.text:
+                    # 'MDX\nStore MDX MDX\n0.0000\nEarned (MDX)\n108.34%\nAPY(Compound Interest)\n\n\n\n28,705,423.78\nVL (MDX)'
+                    items = str.splitlines(row.text)
+                    cols = row.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-align-items-xs-center')]")
+                    earned_mdx = str.splitlines(cols[3*i].text)[0]
+                    apy = str.splitlines(cols[3*i+1].text)[0]
+                    vl_value = str.splitlines(cols[3*i+2].text)[0]
+                    vl_name = str.splitlines(cols[3*i+2].text)[1]
+                    res.append(
+                        {
+                            'Assets U': items[0],
+                            'Assets D': items[1],
+                            'Earned (MDX)': earned_mdx,
+                            'APY (Compound Interest)': apy,
+                            vl_name: vl_value
+                        }
+                    )
+                except Exception as e:
+                    print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    continue
+            if not is_valid_coinwind_data(res):
+                time.sleep(1)
+            else:
+                break
         try:
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[1]/div[3]/div[1]/div[2]").text
         except Exception as e:
@@ -182,28 +212,31 @@ def get_heco_coinwind_data():
         logger.error("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         return {
             'data': [],
-            'tvl': tvl
+            'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_heco_filda_data():
+    driver = create_browser(network_needed='heco', b_id=2)
     try:
-        driver = create_browser(network_needed='heco', b_id=2)
         driver.get(FILDA_URL)
 
         main_window_handle = driver.current_window_handle
 
         try:
             # connect the wallet
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 4).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div[1]/div[2]/div[2]/button"))).click()
 
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 1).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/div[3]/div/div/div[2]/div/div/div/button"))).click()
 
             connect_metamask_v2(driver)
+        except TimeoutException as e:
+            pass
         except Exception as e:
             print("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
@@ -258,16 +291,17 @@ def get_heco_filda_data():
         logger.error("get_heco_filda_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         return {
             'data': [],
-            'tvl': tvl
+            'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def connect_metamask_v2(driver):
 
     metamask_window_handle = None
-    for i in range(10):
+    for i in range(5):
         if not metamask_window_handle:
             for handle in driver.window_handles:
                 driver.switch_to.window(handle)
@@ -327,8 +361,8 @@ def connect_metamask(driver):
 
 
 def get_heco_lendhub_data():
+    driver = create_browser(network_needed='heco', b_id=4)
     try:
-        driver = create_browser(network_needed='heco', b_id=4)
         driver.get(LENDHUB_URL)
 
         main_window_handle = driver.current_window_handle
@@ -426,21 +460,31 @@ def get_heco_lendhub_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def is_valid_hfi_data(res):
+    # if >30% apy and total data is valid, we assume the data is valid,
+    #   as sometimes not all data will be available.
     for k, v in res.items():
-        for row in v:
-            for _k, _v in row.items():
-                if _v == '--':
-                    return False
+        # check_all_apy_value = [_v for row in v for _k, _v in row.items() if _k == 'APY']
+        # check_all_total_value = [_v for row in v for _k, _v in row.items() if _k == 'APY']
+        check_all_apy_validity = [_v == '--' for row in v for _k, _v in row.items() if _k == 'APY']
+        check_all_total_validity = [_v == '--' for row in v for _k, _v in row.items() if _k == 'total']
+        count_valid_apy_num = sum(check_all_apy_validity)
+        count_valid_total_num = sum(check_all_total_validity)
+        valid_apy_percentage = 1 - count_valid_apy_num * 1.0 / len(check_all_apy_validity) if len(check_all_apy_validity) > 0 else 0
+        valid_total_num = 1 - count_valid_total_num * 1.0 / len(check_all_total_validity) if len(check_all_total_validity) > 0 else 0
+
+        if valid_apy_percentage < 0.7 or valid_total_num < 0.7:
+            return False
     return True
 
 
 def get_heco_hfi_data():
+    driver = create_browser(network_needed='heco', b_id=5)
     try:
-        driver = create_browser(network_needed='heco', b_id=5)
         driver.get(HFI_URL)
 
         main_window_handle = driver.current_window_handle
@@ -508,24 +552,30 @@ def get_heco_hfi_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_eth_curve_data():
+    driver = create_browser(b_id=13)
     try:
         try:
-            driver = create_browser(b_id=13)
             driver.get(CURVE_TVL_URL)
             # click close choose wallet button
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/aside/section/div[2]"))).click()
 
-            time.sleep(2)
-
             # find the tvl place
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"total-balances\"]/span")))
             tvl = driver.find_element(By.XPATH, "//*[@id=\"total-balances\"]/span").text
+
+            for i in range(10):
+                if not tvl:
+                    time.sleep(1)
+                    tvl = driver.find_element(By.XPATH, "//*[@id=\"total-balances\"]/span").text
+                else:
+                    break
         except Exception as e:
             print("get_eth_curve_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error(
@@ -566,7 +616,9 @@ def get_eth_curve_data():
             'data': [],
             'tvl': None
         }
-
+    finally:
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 def get_eth_yfi_data():
     try:
@@ -673,21 +725,53 @@ def get_eth_vesper_data():
 
 
 def get_eth_sushi_data():
+    driver = create_browser(b_id=6)
     try:
-        driver = create_browser(b_id=6)
         driver.get(SUSHI_URL)
+        main_window_handle = driver.current_window_handle
+
+        # while open the sushi url (loads slowly), we go to sushi tvl site to get tvl
+        try:
+            driver.execute_script("window.open('https://app.sushi.com/home', 'new_window')")
+
+            # be sure to change the focus
+            for handle in driver.window_handles:
+                if driver.current_url != 'https://app.sushi.com/home':
+                    driver.switch_to.window(handle)
+                else:
+                    break
+
+            WebDriverWait(driver, 40).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div")))
+            _tvl = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div").text
+            _useless_percentage = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div/span").text
+            try:
+                tvl = _tvl[:_tvl.index(_useless_percentage)]
+            except Exception as e:
+                tvl = _tvl
+        except Exception as e:
+            tvl = None
+            print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error(
+                "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+        driver.switch_to.window(main_window_handle)
+
         WebDriverWait(driver, 5).until(EC.presence_of_element_located(
             (By.TAG_NAME, "tbody")))
 
-        time.sleep(2.5)
         table = driver.find_element(By.TAG_NAME, "tbody")
         rows = table.find_elements(By.TAG_NAME, "tr")
 
         # in case that the table is not loaded yet
-        while len(rows) < 12 or not rows:
-            time.sleep(1)
-            table = driver.find_element(By.TAG_NAME, "tbody")
-            rows = table.find_elements(By.TAG_NAME, "tr")
+        for i in range(10):
+            print(i)
+            if len(rows) < 12 or not rows:
+                time.sleep(1)
+                table = driver.find_element(By.TAG_NAME, "tbody")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+            else:
+                break
 
         res = []
         for row in rows:
@@ -712,21 +796,6 @@ def get_eth_sushi_data():
                 logger.error(
                     "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                 continue
-        try:
-            driver.get(SUSHI_TVL_URL)
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                (By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div")))
-            _tvl = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div").text
-            _useless_percentage = driver.find_element(By.XPATH, "//*[@id=\"tooltip-idBAR\"]/div/span").text
-            try:
-                tvl = _tvl[:_tvl.index(_useless_percentage)]
-            except Exception as e:
-                tvl = _tvl
-        except Exception as e:
-            tvl = None
-            print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-            logger.error(
-                "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         return {
             'data': res,
             'tvl': tvl
@@ -737,10 +806,11 @@ def get_eth_sushi_data():
             "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         return {
             'data': {},
-            'tvl': tvl
+            'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 # TODO: wait till Ziyue figure out how to handle APY
@@ -749,42 +819,24 @@ def get_eth_uniswap_data():
 
 
 def get_sc_pancakeswap_data():
+    driver = create_browser(b_id=7)
     try:
-        driver = create_browser(b_id=7)
         driver.get(PANCAKESWAP_URL)
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located(
-            (By.TAG_NAME, "tbody")))
 
-        time.sleep(3)
-        table = driver.find_element(By.TAG_NAME, "tbody")
-        rows = table.find_elements(By.TAG_NAME, "tr")
+        main_window_handle = driver.current_window_handle
 
-        # in case that the table is not loaded yet
-        while len(rows) < 50 or not rows:
-            time.sleep(1)
-            table = driver.find_element(By.TAG_NAME, "tbody")
-            rows = table.find_elements(By.TAG_NAME, "tr")
-
-        res = []
-        for row in rows:
-            try:
-                cols = row.find_elements(By.TAG_NAME, "td")
-                res.append(
-                    {
-                        'pair': cols[0].text,
-                        'apr': str.splitlines(cols[2].text)[1],
-                        'liquidity': str.splitlines(cols[3].text)[1],
-                        'multiplier': str.splitlines(cols[4].text)[1]
-                    }
-                )
-            except Exception as e:
-                print("get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                logger.error(
-                    "get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                continue
+        # while waiting for the resp of main url, we try to fetch the tvl first
         try:
-            driver.get(PANCAKESWAP_TVL_URL)
-            WebDriverWait(driver, 2).until(EC.presence_of_element_located(
+            driver.execute_script("window.open('https://pancakeswap.finance/', 'new_window')")
+
+            # be sure to change the focus
+            for handle in driver.window_handles:
+                if driver.current_url != 'https://pancakeswap.finance/':
+                    driver.switch_to.window(handle)
+                else:
+                    break
+
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]")))
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]").text
         except Exception as e:
@@ -792,6 +844,49 @@ def get_sc_pancakeswap_data():
             print("get_sc_pancakeswap_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error(
                 "get_sc_pancakeswap_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+        driver.switch_to.window(main_window_handle)
+
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.TAG_NAME, "tbody")))
+
+        # in case that the table is not loaded yet
+
+        for i in range(10):
+            need_repeat_loop = False
+            table = driver.find_element(By.TAG_NAME, "tbody")
+            rows = table.find_elements(By.TAG_NAME, "tr")
+
+            if len(rows) < 50 or not rows:
+                continue
+
+            res = []
+            for row in rows:
+                try:
+                    cols = row.find_elements(By.TAG_NAME, "td")
+                    apr = str.splitlines(cols[2].text)[1]
+                    if apr == 'Loading...':
+                        need_repeat_loop = True
+                        time.sleep(1)
+                        break
+                    res.append(
+                        {
+                            'pair': cols[0].text,
+                            'apr': apr,
+                            'liquidity': str.splitlines(cols[3].text)[1],
+                            'multiplier': str.splitlines(cols[4].text)[1]
+                        }
+                    )
+                except Exception as e:
+                    print("get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    logger.error(
+                        "get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    continue
+            if not need_repeat_loop:
+                break
+            else:
+                time.sleep(1)
+
         return {
             'data': res,
             'tvl': tvl
@@ -805,7 +900,8 @@ def get_sc_pancakeswap_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_sc_autofarm_data():
@@ -847,9 +943,9 @@ def get_sc_autofarm_data():
 
 
 def is_valid_sc_ellipsis_data(res):
-    return (res.get('pool', {}).get('rewards_apy') == '' and res.get('pool', {}).get('base_apy') == '%' and res.get('pool', {}).get('volume') == '') \
-                    and (res.get('EPS/BNB_staking_apy') == '0' and res.get('3pool_lp_token_apy') == '0') \
-                    and (res.get('EPS_unlocked_apy') == '0% in BUSD\nLocked APY' and res.get('EPS_locked_apy') == '0% in EPS + 0% in BUSD')
+    return (res.get('pool', [{}])[0].get('rewards_apy') != '' and res.get('pool', [{}])[0].get('base_apy') != '%' and res.get('pool', [{}])[0].get('volume') != '') \
+                    and (res.get('EPS/BNB_staking_apy') != '0' and res.get('3pool_lp_token_apy') != '0' and res.get('fUSDT_lp_token_apy') != '0') \
+                    and (res.get('EPS_unlocked_apy') != '0% in BUSD\nLocked APY' and res.get('EPS_locked_apy') != '0% in EPS + 0% in BUSD')
 
 
 def get_sc_ellipsis_data():
@@ -857,50 +953,68 @@ def get_sc_ellipsis_data():
         driver = create_browser(network_needed='sc', b_id=8)
         driver.get(ELLIPSIS_URL)
         main_window_handle = driver.current_window_handle
+
         try:
             WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"WEB3_CONNECT_MODAL_ID\"]/div/div/div[2]/div[1]/div"))).click()
             connect_metamask_v2(driver)
+        except TimeoutError as e:
+            try:
+                driver.get(ELLIPSIS_URL)
+                main_window_handle = driver.current_window_handle
+                WebDriverWait(driver, 3).until(EC.presence_of_element_located(
+                    (By.XPATH, "//*[@id=\"WEB3_CONNECT_MODAL_ID\"]/div/div/div[2]/div[1]/div"))).click()
+                connect_metamask_v2(driver)
+            except Exception as e:
+                print("get_sc_ellipsis_data request web timeout:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                logger.error("get_sc_ellipsis_data request web timeout:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         except Exception as e:
             print("get_sc_ellipsis_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error("get_sc_ellipsis_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-        time.sleep(8)
 
-        # max retry times: 5
-        for i in range(5):
+        # max retry times: 10
+        for i in range(10):
+            print(i)
             res = {}
             tables = driver.find_elements(By.TAG_NAME, 'fieldset')
             for table in tables:
                 legend_names = table.find_elements(By.TAG_NAME, 'legend')
                 for legend_name in legend_names:
                     if str.strip(legend_name.text) == 'Ellipsis pools':
-                        try:
-                            info_table = table.find_element(By.TAG_NAME, 'table')
-                            table_cols = info_table.find_elements(By.TAG_NAME, 'td')
-                            res['pool'] = {
-                                'asset': str.splitlines(table_cols[5].text)[1],
-                                'base_apy': table_cols[6].text,
-                                'rewards_apy': table_cols[7].text,
-                                'volume': table_cols[8].text
-                            }
-                        except Exception as e:
-                            res['pool'] = {
-                                'asset': 'N/A',
-                                'base_apy': 'N/A',
-                                'rewards_apy': 'N/A',
-                                'volume': 'N/A',
-                            }
+                            info_tables = table.find_element(By.TAG_NAME, "table").find_elements(By.XPATH, "./a[*]")
+                            for info_table in info_tables:
+                                try:
+                                    table_cols = info_table.find_elements(By.TAG_NAME, 'td')
+                                    res.setdefault('pool', []).append(
+                                        {
+                                            'asset': str.splitlines(table_cols[0].text)[1],
+                                            'base_apy': table_cols[1].text,
+                                            'rewards_apy': table_cols[2].text,
+                                            'volume': table_cols[3].text
+                                        }
+                                    )
+                                except Exception as e:
+                                    res.setdefault('pool', []).append(
+                                        {
+                                            'asset': 'N/A',
+                                            'base_apy': 'N/A',
+                                            'rewards_apy': 'N/A',
+                                            'volume': 'N/A',
+                                        }
+                                    )
 
                     if str.strip(legend_name.text) == 'Stake LP Tokens':
                         try:
                             info = table.find_elements(By.TAG_NAME, 'div')
                             res['EPS/BNB_staking_apy'] = str.strip(info[0].text.split(':')[1])
                             res['3pool_lp_token_apy'] = str.strip(info[2].text.split(':')[1])
+                            res['fUSDT_lp_token_apy'] = str.strip(info[4].text.split(':')[1])
                         except Exception as e:
                             res['EPS/BNB_staking_apy'] = 'N/A'
                             res['3pool_lp_token_apy'] = 'N/A'
+                            res['fUSDT_lp_token_apy'] = 'N/A'
 
                     if str.strip(legend_name.text) == 'Stake EPS':
                         try:
@@ -912,8 +1026,9 @@ def get_sc_ellipsis_data():
                             res['EPS_locked_apy'] = 'N/A'
 
             # if invalid output, we try to get the data again
+
             if not is_valid_sc_ellipsis_data(res):
-                time.sleep(2)
+                time.sleep(1.5)
             else:
                 break
         try:
@@ -938,18 +1053,18 @@ def get_sc_ellipsis_data():
 
 
 def get_sc_pancakebunny_data():
+    driver = create_browser(network_needed='sc', b_id=9)
     try:
-        driver = create_browser(network_needed='sc', b_id=9)
         driver.get(PANCAKEBUNNY_URL)
-        time.sleep(2)
+        time.sleep(1)
+
+        main_window_handle = driver.current_window_handle
 
         try:
-            main_window_handle = driver.current_window_handle
-
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 2).until(EC.presence_of_element_located(
                 (By.CLASS_NAME, "placeholders-card"))).click()
 
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 2).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div[6]/div[2]/div/div/div[3]/div[1]"))).click()
 
             connect_metamask_v2(driver)
@@ -958,15 +1073,14 @@ def get_sc_pancakebunny_data():
             logger.error("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-        driver.refresh()
-
-        time.sleep(6.66)
 
         res = []
 
         # max retry time: 20
         for i in range(20):
+            print(i)
             if not res:
+                res = []
                 time.sleep(1)
                 rows = copy(driver.find_elements(By.CLASS_NAME, "row"))
                 for row in rows:
@@ -992,6 +1106,8 @@ def get_sc_pancakebunny_data():
                         print("get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                         logger.error(
                             "get_sc_pancakebunny_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            else:
+                break
 
         try:
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[3]/div[1]/div[1]/div/div/div/div[1]/div[1]/span[1]").text
@@ -1012,26 +1128,26 @@ def get_sc_pancakebunny_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_sc_belt_data():
+    driver = create_browser(b_id=10)
     try:
-        driver = create_browser(b_id=10)
         driver.get(BELT_URL)
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.XPATH, "//*[@id=\"router-wrapper\"]/div[2]/div[4]")))
 
-        time.sleep(5)
-
         table = driver.find_element(By.CSS_SELECTOR, '.belt-pools')
         rows = table.find_elements(By.TAG_NAME, 'li')
 
-        while not rows:
-            time.sleep(2)
-            table = driver.find_element(By.CSS_SELECTOR, '.belt-pools')
-            rows = table.find_elements(By.TAG_NAME, 'li')
+        for _ in range(10):
+            while not rows:
+                time.sleep(2)
+                table = driver.find_element(By.CSS_SELECTOR, '.belt-pools')
+                rows = table.find_elements(By.TAG_NAME, 'li')
 
         res = []
         for row in rows:
@@ -1077,7 +1193,8 @@ def get_sc_belt_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def convert_valid_aplaca_data(apy):
@@ -1092,69 +1209,76 @@ def convert_valid_aplaca_data(apy):
 
 
 def get_sc_aplaca_data():
+    driver = create_browser(network_needed='sc', b_id=11)
     try:
-        driver = create_browser(network_needed='sc', b_id=11)
         driver.get(ALPACAFINANCE_URL)
 
         # click 'connect to a wallet' button
         try:
             main_window_handle = driver.current_window_handle
 
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button"))).click()
 
-            time.sleep(1)
-
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 1).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/div[3]/div/div[2]/div/div[2]/div[2]/div/button"))).click()
 
             connect_metamask_v2(driver)
+        except TimeoutException as e:
+            pass
         except Exception as e:
             print("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-        time.sleep(5)
 
-        table = driver.find_element(By.TAG_NAME, 'tbody')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        rows = copy(rows)
-
-        res = []
-        for row in rows:
-            if not row.text:
-                continue
-            try:
+        for i in range(10):
+            need_repeat_loop = False
+            table = driver.find_element(By.TAG_NAME, 'tbody')
+            rows = table.find_elements(By.TAG_NAME, 'tr')
+            rows = copy(rows)
+            res = []
+            for row in rows:
+                if not row.text:
+                    continue
                 cols = row.find_elements(By.TAG_NAME, 'td')
-                name = str.splitlines(cols[1].text)[1]
-                apy_u = convert_valid_aplaca_data(str.splitlines(cols[2].text)[0])
-                apy_d = convert_valid_aplaca_data(str.splitlines(cols[2].text)[1])
-                yield_farming = str.splitlines(cols[3].text)[1]
-                trading_fees = str.splitlines(cols[3].text)[3]
-                alpaca_rewards = str.splitlines(cols[3].text)[5]
-                borrowing_interest = str.splitlines(cols[3].text)[7]
-                leverage = str.splitlines(cols[4].text)[0]
-                res.append(
-                    {
-                        'name': name,
-                        'apy_u': apy_u,
-                        'apy_d': apy_d,
-                        'yield_farming': yield_farming,
-                        'trading_fees': trading_fees,
-                        'alpaca_rewards': alpaca_rewards,
-                        'borrowing_interest': borrowing_interest,
-                        'leverage': leverage
-                    }
-                )
-            except Exception as e:
-                print("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                logger.error(
-                    "get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-                continue
+                try:
+                    name = str.splitlines(cols[1].text)[1]
+                    apy_u = convert_valid_aplaca_data(str.splitlines(cols[2].text)[0])
+                    apy_d = convert_valid_aplaca_data(str.splitlines(cols[2].text)[1])
+                    yield_farming = str.splitlines(cols[3].text)[1]
+                    trading_fees = str.splitlines(cols[3].text)[3]
+                    alpaca_rewards = str.splitlines(cols[3].text)[5]
+                    borrowing_interest = str.splitlines(cols[3].text)[7]
+                    leverage = str.splitlines(cols[4].text)[0]
+                    res.append(
+                        {
+                            'name': name,
+                            'apy_u': apy_u,
+                            'apy_d': apy_d,
+                            'yield_farming': yield_farming,
+                            'trading_fees': trading_fees,
+                            'alpaca_rewards': alpaca_rewards,
+                            'borrowing_interest': borrowing_interest,
+                            'leverage': leverage
+                        }
+                    )
+                # if the data is not ready, we retry
+                except IndexError as e:
+                    time.sleep(1)
+                    need_repeat_loop = True
+                    break
+                except Exception as e:
+                    print("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    logger.error(
+                        "get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    continue
+            if not need_repeat_loop:
+                break
 
         try:
             driver.get(ALPACAFINANCE_TVL_URL)
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span"))).click()
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span").text
         except Exception as e:
@@ -1174,33 +1298,33 @@ def get_sc_aplaca_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_sc_bake_data():
+    driver = create_browser(network_needed='sc', b_id=12)
     try:
-        driver = create_browser(network_needed='sc', b_id=12)
         driver.get(BAKE_URL)
 
         try:
             main_window_handle = driver.current_window_handle
 
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/button"))).click()
 
-            time.sleep(1)
-
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 1).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"connect-METAMASK\"]"))).click()
 
             connect_metamask_v2(driver)
+        except TimeoutException as e:
+            pass
         except Exception as e:
             print("get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error(
                 "get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-        driver.switch_to.window(main_window_handle)
 
-        time.sleep(2)
+        driver.switch_to.window(main_window_handle)
 
         for i in range(10):
             table = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[5]")
@@ -1233,17 +1357,20 @@ def get_sc_bake_data():
                 time.sleep(1)
                 continue
 
-        try:
-            driver.get(BAKE_TVL_URL)
-            time.sleep(3)
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
-                (By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span"))).click()
-            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span").text
-        except Exception as e:
-            tvl = None
-            print("get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
-            logger.error(
-                "get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        driver.get(BAKE_TVL_URL)
+        for i in range(10):
+            try:
+                tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span").text
+                if tvl == '0.000':
+                    time.sleep(1)
+                    continue
+                else:
+                    break
+            except Exception as e:
+                tvl = None
+                print("get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                logger.error(
+                    "get_sc_bake_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
         return {
             'data': res,
             'tvl': tvl
@@ -1257,42 +1384,20 @@ def get_sc_bake_data():
             'tvl': None
         }
     finally:
-        driver.quit()
-
-
-def get_sc_smoothy_data(driver):
-    pass
+        if isinstance(driver, WebDriver):
+            driver.quit()
 
 
 def get_task_needed(return_values):
     task_needed = []
     for i, row in enumerate(return_values):
-        if not row:
+        if not row or not row.get('data') or not row.get('tvl'):
             task_needed.append(i)
+    # __import__('pudb').set_trace()
     return task_needed
 
 
 def get_data_concurrently(task_list):
-    # task_list = [
-    #     (get_heco_mdex_data, ()),
-    #     (get_heco_filda_data, ()),
-    #     (get_heco_coinwind_data, ()),
-    #     (get_heco_lendhub_data, ()),
-    #     (get_heco_hfi_data, ()),
-    #     (get_eth_curve_data, ()), # API
-    #     (get_eth_yfi_data, ()), # API
-    #     (get_eth_vesper_data, ()), # API
-    #     (get_eth_sushi_data, ()),
-    #     # (get_eth_uniswap_data, ()), # TODO
-    #     (get_sc_pancakeswap_data, ()),
-    #     (get_sc_venus_data, ()),
-    #     (get_sc_autofarm_data, ()),
-    #     (get_sc_ellipsis_data, ()), # AA VPN CANNOT WORKING?
-    #     (get_sc_pancakebunny_data, ()), # TODO: ????? WTF
-    #     (get_sc_belt_data, ()),
-    #     (get_sc_aplaca_data, ()),
-    #     (get_sc_bake_data, ()) # TODO: ????? WTF
-    # ]
     return_values = run_in_threads(task_list)
 
     task_needed = get_task_needed(return_values)
@@ -1305,68 +1410,185 @@ def get_data_concurrently(task_list):
 
     return return_values
 
+
 def get_data():
+    # TASK_LIST_BY_POOL = {
+    #     'heco': [
+    #         (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
+    #         (get_heco_filda_data, ()),  # METAMASK NEEDED; 16s
+    #         (get_heco_coinwind_data, ()),  # METAMASK NEEDED; 13s
+    #         (get_heco_hfi_data, ()),  # METAMASK NEEDED; 15s
+    #         (get_heco_lendhub_data, ()),  # METAMASK NEEDED; 18s
+    #         (get_eth_curve_data, ()),  # Browser AND API access; # 15s
+    #     ],
+    #     'eth': [
+    #         (get_eth_yfi_data, ()),  # API
+    #         (get_eth_vesper_data, ()),  # API
+    #         (get_sc_venus_data, ()),  # API
+    #         (get_sc_autofarm_data, ()),  # API
+    #     ],
+    #     'sc': [
+    #         (get_sc_belt_data, ()),  # Browser NEEDED; 12s
+    #         (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
+    #         (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
+    #         # (get_sc_ellipsis_data, ()),  # METAMASK NEEDED; AA VPN CANNOT WORKING? 20s
+    #         (get_sc_pancakebunny_data, ()),  # METAMASK NEEDEDl; 17s
+    #         (get_sc_aplaca_data, ()),  # METAMASK NEEDED; 24s
+    #         (get_sc_bake_data, ())  # METAMASK NEEDED; 18s
+    #     ]
+    # }
+
     TASK_LIST_BY_POOL = {
-        'heco': [
-            (get_heco_mdex_data, ()),
-            (get_heco_filda_data, ()),
-            (get_heco_coinwind_data, ()),
-            (get_heco_lendhub_data, ()),
-            (get_heco_hfi_data, ()),
+        '1': [
+            # (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
+            (get_heco_filda_data, ()),  # METAMASK NEEDED; 16s
+            (get_heco_coinwind_data, ()),  # METAMASK NEEDED; 13s
+            (get_heco_hfi_data, ()),  # METAMASK NEEDED; 15s
+            (get_heco_lendhub_data, ()),  # METAMASK NEEDED; 18s
+            # (get_eth_curve_data, ()),  # Browser AND API access; # 15s
         ],
-        'eth': [
-            (get_eth_curve_data, ()),  # API
+        '2': [
             (get_eth_yfi_data, ()),  # API
             (get_eth_vesper_data, ()),  # API
-            # (get_eth_uniswap_data, ()), # TODO
-            (get_sc_venus_data, ()),
-            (get_sc_autofarm_data, ()),
+            (get_sc_venus_data, ()),  # API
+            (get_sc_autofarm_data, ()),  # API
         ],
-        'sc': [
-            (get_eth_sushi_data, ()),  # let's see
-            (get_sc_pancakeswap_data, ()),
-            (get_sc_ellipsis_data, ()),  # AA VPN CANNOT WORKING?
-            (get_sc_pancakebunny_data, ()),  # TODO: ????? WTF
-            (get_sc_belt_data, ()),
-            (get_sc_aplaca_data, ()),
-            (get_sc_bake_data, ())  # TODO: ????? WTF
+        '3': [
+            (get_sc_belt_data, ()),  # Browser NEEDED; 12s
+            # (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
+            # (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
+            # (get_sc_ellipsis_data, ()),  # METAMASK NEEDED; AA VPN CANNOT WORKING? 20s
+            (get_sc_pancakebunny_data, ()),  # METAMASK NEEDEDl; 17s
+            (get_sc_aplaca_data, ()),  # METAMASK NEEDED; 24s
+            (get_sc_bake_data, ())  # METAMASK NEEDED; 18s
+        ],
+        '4': [
+            (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
+            (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
+            (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
+            (get_eth_curve_data, ()),  # Browser AND API access; # 15s
         ]
     }
 
     start_time = time.time()
+
     res = {}
 
-    # res[1] = get_heco_mdex_data() # Done; Browser NEEDED
-    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED;
-    # res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED
-    # res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED
-    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED;
-    # res[6] = get_eth_curve_data() # Done; Browser Needed and Fast API access;
+    # res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
+
+    # res[1] = get_heco_mdex_data() # Done; Browser NEEDED; 15s
+    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED; 16s
+    # res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED # 13s
+    # res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED # 18s
+    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; 15s
+    # res[6] = get_eth_curve_data() # Done; Browser Needed and Fast API access; # 15s
     # res[7] = get_eth_yfi_data() # Done; Fast API access;
     # res[8] = get_eth_vesper_data() # Done; Fast API access
-    # res[9] = get_eth_sushi_data() # Done; Browser NEEDED; No METAMASK NEEDED;
-    # res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED;
+    # res[9] = get_eth_sushi_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
+    # res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
     # res[12] = get_sc_venus_data() # Done; Fast API access
     # res[13] = get_sc_autofarm_data() # Done; Fast API access
-    # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING?
-    # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED
-    # res[16] = get_sc_belt_data() # Done; Browser NEEDED;
-    res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED
-    # res[18] = get_sc_bake_data() # Done; METAMASK NEEDED
+    # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; TODO: AA VPN CANNOT WORKING? # 34s -> 20s
+    # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED # 29s -> 17s
+    # res[16] = get_sc_belt_data() # Done; Browser NEEDED; 18s -> 12s
+    # res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED; 34s -> 24s
+    # res[18] = get_sc_bake_data() # Done; METAMASK NEEDED; 37s -> 18s
 
-    print(res[17])
     __import__('pudb').set_trace()
+    res['1'] = get_data_concurrently(TASK_LIST_BY_POOL.get('1'))
 
-    # 5.5mins
+    print("--- %s seconds ---" % (time.time() - start_time))
 
-    res['heco'] = get_data_concurrently(TASK_LIST_BY_POOL.get('heco'))
-    res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
-    res['sc'] = get_data_concurrently(TASK_LIST_BY_POOL.get('sc'))
+    start_time = time.time()
+
+
+    res['2'] = get_data_concurrently(TASK_LIST_BY_POOL.get('2'))
+
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
+    start_time = time.time()
+
+    # res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    res['3'] = get_data_concurrently(TASK_LIST_BY_POOL.get('3'))
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+
+    res['4'] = get_data_concurrently(TASK_LIST_BY_POOL.get('4'))
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    # all_list = [] + TASK_LIST_BY_POOL.get('heco') + TASK_LIST_BY_POOL.get('eth') + TASK_LIST_BY_POOL.get('sc')
+    # res['all'] = get_data_concurrently(all_list)
+
+    __import__('pudb').set_trace()
+
+
+def get_data_serially():
+    res = {}
+
+    res[1] = get_heco_mdex_data() # Done; Browser NEEDED; 15s
+    res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED; 16s
+    res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED # 13s
+    res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED # 18s
+    res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; 15s
+    res[6] = get_eth_curve_data() # Done; Browser Needed and Fast API access; # 15s
+    res[7] = get_eth_yfi_data() # Done; Fast API access;
+    res[8] = get_eth_vesper_data() # Done; Fast API access
+    res[9] = get_eth_sushi_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
+    res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
+    res[12] = get_sc_venus_data() # Done; Fast API access
+    res[13] = get_sc_autofarm_data() # Done; Fast API access
+    res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; AA VPN CANNOT WORKING? # 34s -> 20s
+    res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED # 29s -> 17s
+    res[16] = get_sc_belt_data() # Done; Browser NEEDED; 18s -> 12s
+    res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED; 34s -> 24s
+    res[18] = get_sc_bake_data() # Done; METAMASK NEEDED; 37s -> 18s
+
+
+def test_joblib():
+    start_time = time.time()
+    job_list = [
+        get_sc_aplaca_data,
+        get_sc_pancakeswap_data,
+        get_eth_sushi_data,
+        get_eth_curve_data,
+        get_sc_bake_data,
+        get_sc_pancakebunny_data,
+        get_heco_filda_data,
+        get_heco_coinwind_data,
+        get_heco_hfi_data,
+        get_heco_lendhub_data,
+        # get_sc_ellipsis_data,
+        get_heco_mdex_data,
+        get_sc_belt_data,
+        get_eth_yfi_data,
+        get_eth_vesper_data,
+        get_sc_venus_data,
+        get_sc_autofarm_data
+    ]
+    res = Parallel(n_jobs=-1)(delayed(job)() for job in job_list)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+    print('START WRITING EXCEL...')
+    # write_excel(res)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    __import__('pudb').set_trace()
+
+
 if __name__ == '__main__':
-    get_data()
+    # get_heco_mdex_data()
+    test_joblib()
+    # get_data_serially()
+    # get_data()
+    # get_data_concurrently()
     __import__('pudb').set_trace()
 
 

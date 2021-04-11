@@ -18,6 +18,12 @@ SMART_CHAIN_NETWORK_CONFIG = {
     'block_explorer_url': 'https://bscscan.com'
 }
 
+NETWORK_AND_SLUG_MAPPING = {
+    'sc': 'Smart Chain',
+    'heco': 'heco-mainnet',
+    'eth': 'Ethereum Mainnet'
+}
+
 
 MDEX_URL = 'https://mdex.com/#/liquidity'
 VENUS_API_URL = 'https://api.venus.io/api/governance/venus'

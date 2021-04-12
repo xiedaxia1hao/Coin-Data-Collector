@@ -329,11 +329,18 @@ def write_excel(res):
 
     data_excel = xlwt.Workbook()
 
-    APLACA_RESP, MDEX_RESP, FILDA_RESP, COINWIND_RESP, HFI_RESP, \
-    LENDHUB_RESP, CURVE_RESP, BELT_RESP, SUSHI_RESP, \
-    PANCAKESWAP_RESP, ELLIPSIS_RESP, PANCAKEBUNNY_RESP, \
-    BAKE_RESP, YFI_RESP, VESPER_RESP, \
-    VENUS_RESP, AUTOFARM_RESP = res
+    # APLACA_RESP, MDEX_RESP, FILDA_RESP, COINWIND_RESP, HFI_RESP, \
+    # LENDHUB_RESP, CURVE_RESP, BELT_RESP, SUSHI_RESP, \
+    # PANCAKESWAP_RESP, PANCAKEBUNNY_RESP, \
+    # BAKE_RESP, YFI_RESP, VESPER_RESP, \
+    # VENUS_RESP, AUTOFARM_RESP = res
+
+    APLACA_RESP, PANCAKESWAP_RESP, SUSHI_RESP, \
+    CURVE_RESP, BAKE_RESP, PANCAKEBUNNY_RESP, \
+    FILDA_RESP, COINWIND_RESP, HFI_RESP, \
+    LENDHUB_RESP, ELLIPSIS_RESP, \
+    MDEX_RESP, BELT_RESP, YFI_RESP, \
+    VESPER_RESP, VENUS_RESP, AUTOFARM_RESP = res
 
     write_generic_data(data_excel, PANCAKESWAP_RESP, 'PancakeSwap', PANCAKESWAP_URL, sorted_field="apr")
     write_generic_data(data_excel, VENUS_RESP, 'Venus', VENUS_URL)
@@ -353,7 +360,25 @@ def write_excel(res):
     write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub', LENDHUB_URL)
     write_hfi_data(data_excel, HFI_RESP, 'hecoFi', HFI_URL, sorted_field='APY')
 
-    data_excel.save('data_{}.xls'.format(datetime.now().strftime('%Y_%m_%d_%H:%M')))
+    data_excel.save('./excel_data/data_{}.xls'.format(datetime.now().strftime('%Y_%m_%d_%H:%M')))
+
+
+def write_ellipsis_excel(res):
+
+    data_excel = xlwt.Workbook()
+
+    write_ellipsis_data(data_excel, res, 'Ellipsis', ELLIPSIS_URL)
+
+    data_excel.save('./excel_data/ellipsis_data_{}.xls'.format(datetime.now().strftime('%Y_%m_%d_%H:%M')))
+
+
+def write_aplaca_excel(res):
+
+    data_excel = xlwt.Workbook()
+
+    write_generic_data(data_excel, APLACA_RESP, 'Aplaca', ALPACAFINANCE_URL, sorted_field='apy_u')
+
+    data_excel.save('./excel_data/aplaca_data_{}.xls'.format(datetime.now().strftime('%Y_%m_%d_%H:%M')))
 
 
 if __name__ == '__main__':
@@ -378,4 +403,4 @@ if __name__ == '__main__':
     write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub', LENDHUB_URL)
     write_hfi_data(data_excel, HFI_RESP, 'hecoFi', HFI_URL, sorted_field='APY')
 
-    data_excel.save('test.xls')
+    data_excel.save('./excel_data/test.xls')

@@ -9,7 +9,7 @@ from joblib import Parallel, delayed
 from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_URL, HFI_URL, CURVE_API_URL, \
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
     ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
-from excel_generator import write_excel
+from excel_generator import write_excel, write_ellipsis_excel, write_aplaca_excel
 from utils import create_browser, run_in_threads, human_format
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -1217,10 +1217,10 @@ def get_sc_aplaca_data():
         try:
             main_window_handle = driver.current_window_handle
 
-            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button"))).click()
 
-            WebDriverWait(driver, 1).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/div[3]/div/div[2]/div/div[2]/div[2]/div/button"))).click()
 
             connect_metamask_v2(driver)
@@ -1265,7 +1265,7 @@ def get_sc_aplaca_data():
                     )
                 # if the data is not ready, we retry
                 except IndexError as e:
-                    time.sleep(1)
+                    time.sleep(2)
                     need_repeat_loop = True
                     break
                 except Exception as e:
@@ -1278,7 +1278,7 @@ def get_sc_aplaca_data():
 
         try:
             driver.get(ALPACAFINANCE_TVL_URL)
-            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 20).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span"))).click()
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span").text
         except Exception as e:
@@ -1564,7 +1564,7 @@ def test_joblib():
         get_heco_coinwind_data,
         get_heco_hfi_data,
         get_heco_lendhub_data,
-        # get_sc_ellipsis_data,
+        get_sc_ellipsis_data,
         get_heco_mdex_data,
         get_sc_belt_data,
         get_eth_yfi_data,
@@ -1577,18 +1577,46 @@ def test_joblib():
 
     start_time = time.time()
     print('START WRITING EXCEL...')
-    # write_excel(res)
+    write_excel(res)
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    __import__('pudb').set_trace()
+
+def generate_ellipsis_data():
+    res = get_sc_ellipsis_data()
+    write_ellipsis_excel(res)
+
+
+def generate_aplaca_data():
+    res = get_sc_aplaca_data()
+    write_aplaca_excel(res)
 
 
 if __name__ == '__main__':
     # get_heco_mdex_data()
-    test_joblib()
+    # test_joblib()
+    # generate_ellipsis_data()
+    # generate_aplaca_data()
     # get_data_serially()
     # get_data()
     # get_data_concurrently()
-    __import__('pudb').set_trace()
 
+    res = {}
+
+    res[1] = get_heco_mdex_data()  # Done; Browser NEEDED; 15s
+    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED; 16s
+    # res[3] = get_heco_coinwind_data()  # Done; METAMASK NEEDED # 13s
+    # res[4] = get_heco_lendhub_data()  # Done; METAMASK NEEDED # 18s
+    # res[5] = get_heco_hfi_data()  # Done; METAMASK NEEDED; 15s
+    # res[6] = get_eth_curve_data()  # Done; Browser Needed and Fast API access; # 15s
+    # res[7] = get_eth_yfi_data()  # Done; Fast API access;
+    # res[8] = get_eth_vesper_data()  # Done; Fast API access
+    # res[9] = get_eth_sushi_data()  # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
+    # res[11] = get_sc_pancakeswap_data()  # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
+    # res[12] = get_sc_venus_data()  # Done; Fast API access
+    # res[13] = get_sc_autofarm_data()  # Done; Fast API access
+    # res[14] = get_sc_ellipsis_data()  # Done; METAMASK NEEDED; AA VPN CANNOT WORKING? # 34s -> 20s
+    # res[15] = get_sc_pancakebunny_data()  # Done; METAMASK NEEDED # 29s -> 17s
+    # res[16] = get_sc_belt_data()  # Done; Browser NEEDED; 18s -> 12s
+    # res[17] = get_sc_aplaca_data()  # Done; METAMASK NEEDED; 34s -> 24s
+    # res[18] = get_sc_bake_data()  # Done; METAMASK NEEDED; 37s -> 18s
 

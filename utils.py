@@ -295,4 +295,14 @@ def kill_chrome(driver):
             print('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
 
+def get_screenshot_v1(driver, path):
+    el = driver.find_element_by_tag_name('body')
+    el.screenshot(path)
+
+
+def get_screenshot_v2(driver, path):
+    total_width = driver.execute_script("return document.body.offsetWidth")
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    driver.set_window_size(total_width, total_height)
+    driver.save_screenshot(path)
 

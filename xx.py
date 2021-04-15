@@ -10,7 +10,7 @@ from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
     ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
 from excel_generator import write_excel, write_ellipsis_excel, write_aplaca_excel
-from utils import create_browser, run_in_threads, human_format, kill_chrome
+from utils import create_browser, run_in_threads, human_format, kill_chrome, get_screenshot_v1, get_screenshot_v2
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -1294,7 +1294,9 @@ def get_sc_bake_data():
     driver = create_browser(network_needed='sc', b_id=12)
     try:
         driver.get(BAKE_URL)
-
+        total_width = driver.execute_script("return document.body.offsetWidth")
+        total_height = driver.execute_script("return document.body.scrollHeight")
+        driver.set_window_size(total_width + 750, total_height + 2500)
         try:
             main_window_handle = driver.current_window_handle
 
@@ -1313,9 +1315,10 @@ def get_sc_bake_data():
                 "get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-
+        get_screenshot_v1(driver, './bake_v1.png')
+        get_screenshot_v2(driver, './bake_v2.png')
         for i in range(10):
-            table = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[5]")
+            table = driver.find_element(By.XPATH, "//*[@id=\"BodyContainer\"]/div[1]/div[5]")
             rows = copy(table.find_elements(By.XPATH, "./div[*]"))
             res = []
             for row in rows:
@@ -1472,7 +1475,7 @@ def test_joblib():
         get_sc_venus_data,
         get_sc_autofarm_data
     ]
-    res = Parallel(n_jobs=-1, prefer="threads")(delayed(job)() for job in job_list)
+    res = Parallel(n_jobs=-1, backend="loky")(delayed(job)() for job in job_list)
     print("--- %s seconds ---" % (time.time() - start_time))
     start_time = time.time()
     print('START WRITING EXCEL...')
@@ -1492,11 +1495,11 @@ def generate_aplaca_data():
 
 if __name__ == '__main__':
     # get_heco_mdex_data()
-    # test_joblib()
+    test_joblib()
     # generate_ellipsis_data()
     # generate_aplaca_data()
     # get_data_serially()
-    get_data()
+    # get_data()
     # get_data_concurrently()
 
     res = {}

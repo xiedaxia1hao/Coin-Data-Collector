@@ -20,6 +20,7 @@ from tests.mocked_samples.venus_resp import VENUS_RESP
 from tests.mocked_samples.vesper_resp import VESPER_RESP
 from tests.mocked_samples.yfi_resp import YFI_RESP
 from tests.mocked_samples.pancakeswap_resp import PANCAKESWAP_RESP
+import os
 import traceback
 import logging
 logger = logging.getLogger(__name__)
@@ -359,8 +360,11 @@ def write_excel(res):
     write_generic_data(data_excel, COINWIND_RESP, 'CoinWind', COINWIND_URL, sorted_field='APY (Compound Interest)')
     write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub', LENDHUB_URL)
     write_hfi_data(data_excel, HFI_RESP, 'hecoFi', HFI_URL, sorted_field='APY')
-
-    data_excel.save('./excel_data/data_{}.xls'.format(datetime.now().strftime('%Y_%m_%d_%H:%M')))
+    
+    today_date = datetime.now()
+    path = './excel_data/{}'.format(today_date.strftime('%Y_%m_%d'))
+    os.makedirs(path, exist_ok=True)
+    data_excel.save('{}/data_{}.xls'.format(path, today_date.strftime('%Y_%m_%d_%H:%M')))
 
 
 def write_ellipsis_excel(res):

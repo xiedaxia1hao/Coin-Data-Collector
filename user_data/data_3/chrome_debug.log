@@ -1,0 +1,54 @@
+[18508:18708:0415/185435.498306:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18508:18708:0415/185435.498367:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[18508:18708:0415/185435.498726:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18508:18708:0415/185435.500465:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18586:18586:0415/185435.570595:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[18508:18508:0415/185435.614671:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[18676:18704:0415/185435.637288:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[18759:18759:0415/185435.648196:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
+[18508:18508:0415/185435.680886:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185435.681075:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185435.681924:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185436.544912:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[18508:18508:0415/185437.492035:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[18508:18508:0415/185437.519079:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185437.520699:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185437.522411:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18508:18508:0415/185449.783263:INFO:CONSOLE(2)] "128 window.localStorage.getItem(process.env.NETWORK_ID_USE)", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185449.846470:INFO:CONSOLE(2)] "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object] 0xAba48B3fF86645ca417f79215DbdA39B5b7cF6b5 0xa71EdC38d189767582C38A3145b5873052c3e47a  ppppp", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185450.623494:INFO:CONSOLE(1)] "MetaMask: The event 'data' is deprecated and will be removed in the future. Use 'message' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#message", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18508:18508:0415/185450.624727:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18508:18508:0415/185450.633043:INFO:CONSOLE(1)] "MetaMask: The event 'networkChanged' is deprecated and may be removed in the future. Use 'chainChanged' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#chainchanged", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18508:18508:0415/185451.039061:INFO:CONSOLE(2)] "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object] pools", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185451.930910:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.429453:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.441753:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.443070:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.444360:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.445617:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.446898:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.448205:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.449465:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.450728:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.458251:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.459532:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.460829:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185453.463189:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.455238:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.641982:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.643309:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.649592:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.766268:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.776603:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.778033:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.782658:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.784022:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.785338:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.786498:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.793847:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.848125:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185455.849632:INFO:CONSOLE(2)] "0x366dF9F06a685cD2993D46718ee9d31d8268E52e ctrAddress", source: https://www.coinwind.com/static/js/main.af93c1f8.chunk.js (2)
+[18508:18508:0415/185458.268787:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

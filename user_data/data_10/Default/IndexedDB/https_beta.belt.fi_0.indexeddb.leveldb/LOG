@@ -1,0 +1,14 @@
+2021/04/15-18:46:49.286 2c2a Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/MANIFEST-000001
+2021/04/15-18:46:49.286 2c2a Recovering log #338
+2021/04/15-18:46:49.287 2c2a Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/000338.log 
+2021/04/15-18:46:49.287 2c2a Delete type=2 #336
+2021/04/15-18:46:49.914 2c27 Level-0 table #343: started
+2021/04/15-18:46:49.916 2c27 Level-0 table #343: 1660 bytes OK
+2021/04/15-18:46:49.918 2c27 Delete type=0 #338
+2021/04/15-18:46:49.918 2c2d Manual compaction at level-0 from '\x00Y\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00Z\x00\x00\x00' @ 0 : 0; will stop at '\x00Y\x00\x00\x05' @ 3788 : 1
+2021/04/15-18:46:49.918 2c2d Compacting 1@0 + 1@1 files
+2021/04/15-18:46:49.922 2c2d Generated table #344@0: 18 keys, 1290 bytes
+2021/04/15-18:46:49.922 2c2d Compacted 1@0 + 1@1 files => 1290 bytes
+2021/04/15-18:46:49.925 2c2d compacted to: files[ 0 1 1 0 0 0 0 ]
+2021/04/15-18:46:49.925 2c2d Delete type=2 #343
+2021/04/15-18:46:49.925 2c27 Manual compaction at level-0 from '\x00Y\x00\x00\x05' @ 3788 : 1 .. '\x00Z\x00\x00\x00' @ 0 : 0; will stop at (end)

@@ -1,0 +1,33 @@
+[18335:18430:0415/185428.411796:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18335:18430:0415/185428.411884:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[18335:18430:0415/185428.412228:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18335:18430:0415/185428.412549:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[18372:18372:0415/185428.459606:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[18411:18426:0415/185428.558190:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[18335:18335:0415/185428.578866:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[18448:18448:0415/185428.582442:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
+[18335:18335:0415/185428.692525:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185428.693288:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185428.695216:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185429.872506:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[18335:18335:0415/185431.020177:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[18335:18335:0415/185431.055203:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185431.055834:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185431.057491:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[18335:18335:0415/185445.540633:INFO:CONSOLE(1)] "MetaMask: 'ethereum.enable()' is deprecated and may be removed in the future. Please use the 'eth_requestAccounts' RPC method instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1102", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18335:18335:0415/185445.841196:INFO:CONSOLE(1)] "Content is cached for offline use.", source: https://filda.io/static/js/main.9173e661.chunk.js (1)
+[18335:18335:0415/185446.636877:INFO:CONSOLE(1)] "You are accessing the MetaMask window.web3.currentProvider shim. This property is deprecated; use window.ethereum instead. For details, see: https://docs.metamask.io/guide/provider-migration.html#replacing-window-web3", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18335:18335:0415/185446.638493:INFO:CONSOLE(1)] "MetaMask: The event 'data' is deprecated and will be removed in the future. Use 'message' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#message", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18335:18335:0415/185446.639480:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18335:18335:0415/185446.707505:INFO:CONSOLE(1)] "MetaMask: The event 'networkChanged' is deprecated and may be removed in the future. Use 'chainChanged' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#chainchanged", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[18335:18335:0415/185446.886556:INFO:CONSOLE(2)] "duplicate definition - constructor", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185446.887435:INFO:CONSOLE(2)] "duplicate definition - Failure(uint256,uint256,uint256)", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185446.888347:INFO:CONSOLE(2)] "duplicate definition - admin()", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185446.889109:INFO:CONSOLE(2)] "duplicate definition - comptrollerImplementation()", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185446.889904:INFO:CONSOLE(2)] "duplicate definition - pendingAdmin()", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185446.890545:INFO:CONSOLE(2)] "duplicate definition - pendingComptrollerImplementation()", source: https://filda.io/static/js/5.f05c2380.chunk.js (2)
+[18335:18335:0415/185448.802968:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

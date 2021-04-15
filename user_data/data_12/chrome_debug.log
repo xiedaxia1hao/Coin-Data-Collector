@@ -1,0 +1,35 @@
+[17567:17567:0415/185359.316915:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[17530:17626:0415/185359.404685:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[17530:17626:0415/185359.404738:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[17530:17626:0415/185359.404948:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[17530:17626:0415/185359.405150:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[17600:17618:0415/185359.434435:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[17625:17625:0415/185359.446718:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
+[17530:17530:0415/185359.652542:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[17530:17530:0415/185359.693625:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185359.701147:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185359.703181:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185400.823725:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[17530:17530:0415/185401.854939:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[17530:17530:0415/185401.918342:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185401.918766:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185401.920619:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[17530:17530:0415/185417.372370:INFO:CONSOLE(2)] "
+ %c DPlayer v1.26.0 63275c8 %c http://dplayer.js.org 
+
+ color: #fadfa3; background: #030307; padding:5px 0; background: #fadfa3; padding:5px 0;", source: https://www.bakeryswap.org/static/js/3.d8eb81bf.chunk.js (2)
+[17530:17530:0415/185417.570874:INFO:CONSOLE(2)] "react-i18next:: i18n.languages were undefined or empty undefined", source: https://www.bakeryswap.org/static/js/3.d8eb81bf.chunk.js (2)
+[17530:17530:0415/185417.572882:INFO:CONSOLE(1)] "MetaMask: 'ethereum.send(...)' is deprecated and may be removed in the future. Please use 'ethereum.sendAsync(...)' or 'ethereum.request(...)' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[17530:17530:0415/185417.672753:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[17530:17530:0415/185417.673531:INFO:CONSOLE(1)] "MetaMask: The event 'networkChanged' is deprecated and may be removed in the future. Use 'chainChanged' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#chainchanged", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[17530:17530:0415/185417.750825:INFO:CONSOLE(1)] "MetaMask: The event 'data' is deprecated and will be removed in the future. Use 'message' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#message", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[17530:17530:0415/185418.010642:INFO:CONSOLE(8)] "%s: %s MaxListenersExceededWarning Possible EventEmitter memory leak detected. 101 "connect" listeners added. Use emitter.setMaxListeners() to increase limit.", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (8)
+[17530:17530:0415/185418.011728:INFO:CONSOLE(8)] "%s: %s MaxListenersExceededWarning Possible EventEmitter memory leak detected. 101 "close" listeners added. Use emitter.setMaxListeners() to increase limit.", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (8)
+[17530:17530:0415/185418.012950:INFO:CONSOLE(8)] "%s: %s MaxListenersExceededWarning Possible EventEmitter memory leak detected. 101 "data" listeners added. Use emitter.setMaxListeners() to increase limit.", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (8)
+[17530:17530:0415/185418.013844:INFO:CONSOLE(8)] "%s: %s MaxListenersExceededWarning Possible EventEmitter memory leak detected. 101 "error" listeners added. Use emitter.setMaxListeners() to increase limit.", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (8)
+[17530:17530:0415/185419.484781:INFO:CONSOLE(1)] "Fetching chunk [object Object] [object Object] 6585281", source: https://www.bakeryswap.org/static/js/main.130eebd1.chunk.js (1)
+[17530:17530:0415/185425.591718:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

@@ -1,0 +1,14 @@
+2021/04/15-18:54:23.050 4644 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/IndexedDB/https_pancakebunny.finance_0.indexeddb.leveldb/MANIFEST-000001
+2021/04/15-18:54:23.050 4644 Recovering log #542
+2021/04/15-18:54:23.051 4644 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/IndexedDB/https_pancakebunny.finance_0.indexeddb.leveldb/000542.log 
+2021/04/15-18:54:23.051 4644 Delete type=2 #540
+2021/04/15-18:54:23.378 4645 Level-0 table #547: started
+2021/04/15-18:54:23.380 4645 Level-0 table #547: 1676 bytes OK
+2021/04/15-18:54:23.383 4645 Delete type=0 #542
+2021/04/15-18:54:23.383 4645 Manual compaction at level-0 from '\x00\x8a\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x8b\x00\x00\x00' @ 0 : 0; will stop at '\x00\x8a\x00\x00\x05' @ 5895 : 1
+2021/04/15-18:54:23.383 4645 Compacting 1@0 + 1@1 files
+2021/04/15-18:54:23.389 4645 Generated table #548@0: 42 keys, 1568 bytes
+2021/04/15-18:54:23.389 4645 Compacted 1@0 + 1@1 files => 1568 bytes
+2021/04/15-18:54:23.392 4645 compacted to: files[ 0 1 1 0 0 0 0 ]
+2021/04/15-18:54:23.392 4645 Delete type=2 #547
+2021/04/15-18:54:23.392 4645 Manual compaction at level-0 from '\x00\x8a\x00\x00\x05' @ 5895 : 1 .. '\x00\x8b\x00\x00\x00' @ 0 : 0; will stop at (end)

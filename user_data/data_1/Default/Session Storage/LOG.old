@@ -1,0 +1,15 @@
+2021/04/15-18:42:29.937 172f Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_1/Default/Session Storage/MANIFEST-000001
+2021/04/15-18:42:29.939 172f Recovering log #175
+2021/04/15-18:42:29.940 172f Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_1/Default/Session Storage/000175.log 
+2021/04/15-18:42:29.941 172f Delete type=0 #172
+2021/04/15-18:42:29.941 172d Compacting 4@0 + 1@1 files
+2021/04/15-18:42:29.962 172d Generated table #178@0: 394 keys, 33819 bytes
+2021/04/15-18:42:29.962 172d Compacted 4@0 + 1@1 files => 33819 bytes
+2021/04/15-18:42:29.966 172d compacted to: files[ 0 1 1 0 0 0 0 ]
+2021/04/15-18:42:29.967 172d Delete type=2 #170
+2021/04/15-18:42:29.968 172d Delete type=2 #166
+2021/04/15-18:42:29.968 172d Delete type=2 #176
+2021/04/15-18:42:29.968 172d Delete type=2 #168
+2021/04/15-18:42:29.968 172d Delete type=2 #173
+2021/04/15-18:42:53.464 172d Level-0 table #180: started
+2021/04/15-18:42:53.471 172d Level-0 table #180: 27774 bytes OK

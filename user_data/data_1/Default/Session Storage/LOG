@@ -1,0 +1,10 @@
+2021/04/15-18:46:29.441 2b93 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_1/Default/Session Storage/MANIFEST-000001
+2021/04/15-18:46:29.445 2b93 Recovering log #175
+2021/04/15-18:46:29.453 2b93 Level-0 table #180: started
+2021/04/15-18:46:29.458 2b93 Level-0 table #180: 27774 bytes OK
+2021/04/15-18:46:29.458 2b93 Recovering log #179
+2021/04/15-18:46:29.459 2b93 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_1/Default/Session Storage/000179.log 
+2021/04/15-18:46:29.466 2b93 Delete type=0 #175
+2021/04/15-18:46:50.398 2b91 Level-0 table #182: started
+2021/04/15-18:46:50.404 2b91 Level-0 table #182: 27762 bytes OK
+2021/04/15-18:46:50.408 2b91 Delete type=0 #179

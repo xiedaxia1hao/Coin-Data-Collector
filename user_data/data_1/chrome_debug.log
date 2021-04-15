@@ -1,0 +1,26 @@
+[11104:11224:0415/184629.506528:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[11104:11224:0415/184629.506593:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[11104:11224:0415/184629.507418:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[11104:11224:0415/184629.507627:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[11142:11142:0415/184629.564655:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[11208:11223:0415/184629.716479:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[11104:11104:0415/184629.731160:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[11261:11261:0415/184629.731862:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
+[11104:11104:0415/184629.841312:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184629.844668:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184629.846089:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184631.557738:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[11104:11104:0415/184632.665084:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[11104:11104:0415/184632.710487:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184632.712538:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184632.715836:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[11104:11104:0415/184645.649680:INFO:CONSOLE(0)] "Manifest: property 'start_url' ignored, should be same origin as document.", source: https://cdn.jsdelivr.net/gh/mdexSwap/mdexSwap.github.io@2.0/manifest.json (0)
+[11104:11104:0415/184645.908315:INFO:CONSOLE(1)] "MetaMask: 'ethereum.enable()' is deprecated and may be removed in the future. Please use the 'eth_requestAccounts' RPC method instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1102", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[11104:11104:0415/184646.100086:INFO:CONSOLE(23)] "TypeError: Cannot read property 'pool_mdx' of undefined", source: https://cdn.jsdelivr.net/gh/mdexSwap/mdexSwap.github.io@2.0/js/chunk-vendors.bbeaba5f.js (23)
+[11104:11104:0415/184646.517370:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[11104:11104:0415/184646.534446:INFO:CONSOLE(1)] "web3-shh package will be deprecated in version 1.3.5 and will no longer be supported.", source: https://cdn.jsdelivr.net/gh/mdexSwap/mdexSwap.github.io@2.0/js/chunk-vendors.bbeaba5f.js (1)
+[11104:11104:0415/184646.537036:INFO:CONSOLE(73)] "web3-bzz package will be deprecated in version 1.3.5 and will no longer be supported.", source: https://cdn.jsdelivr.net/gh/mdexSwap/mdexSwap.github.io@2.0/js/chunk-vendors.bbeaba5f.js (73)
+[11104:11104:0415/184648.921078:INFO:CONSOLE(1)] "get Assetslist Error: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.", source: https://cdn.jsdelivr.net/gh/mdexSwap/mdexSwap.github.io@2.0/js/app.84705c7a.js (1)
+[11104:11104:0415/184650.433300:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

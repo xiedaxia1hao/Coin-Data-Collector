@@ -10,7 +10,7 @@ from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
     ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
 from excel_generator import write_excel, write_ellipsis_excel, write_aplaca_excel
-from utils import create_browser, run_in_threads, human_format
+from utils import create_browser, run_in_threads, human_format, kill_chrome
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -90,8 +90,7 @@ def get_heco_mdex_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_sc_venus_data():
@@ -169,23 +168,24 @@ def get_heco_coinwind_data():
             rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")
             rows = copy(rows)
             res = []
+            el = driver.find_element_by_tag_name('body')
+            el.screenshot('coinwind.png')
+            elem = driver.find_element_by_xpath("//*")
+            source_code = elem.get_attribute("outerHTML")
+            with open('coinwind.html', 'w') as f:
+                f.write(source_code)
             for i, row in enumerate(rows):
                 try:
                     # Sample row.text:
                     # 'MDX\nStore MDX MDX\n0.0000\nEarned (MDX)\n108.34%\nAPY(Compound Interest)\n\n\n\n28,705,423.78\nVL (MDX)'
                     items = str.splitlines(row.text)
-                    cols = row.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-align-items-xs-center')]")
-                    earned_mdx = str.splitlines(cols[3*i].text)[0]
-                    apy = str.splitlines(cols[3*i+1].text)[0]
-                    vl_value = str.splitlines(cols[3*i+2].text)[0]
-                    vl_name = str.splitlines(cols[3*i+2].text)[1]
                     res.append(
                         {
                             'Assets U': items[0],
                             'Assets D': items[1],
-                            'Earned (MDX)': earned_mdx,
-                            'APY (Compound Interest)': apy,
-                            vl_name: vl_value
+                            'Earned (MDX)': items[6],
+                            'APY (Compound Interest)': items[11],
+                            items[12]: items[13]
                         }
                     )
                 except Exception as e:
@@ -215,8 +215,7 @@ def get_heco_coinwind_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_heco_filda_data():
@@ -243,12 +242,10 @@ def get_heco_filda_data():
 
         # Switch back to main tab
         driver.switch_to.window(main_window_handle)
-
         WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.XPATH, "//div[contains(@class, 'Markets_marketsItemRow')]")))
 
         rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'Markets_marketsItemRow')]")
-
         res = []
         for row in rows:
             try:
@@ -294,8 +291,7 @@ def get_heco_filda_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def connect_metamask_v2(driver):
@@ -378,15 +374,17 @@ def get_heco_lendhub_data():
         WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.XPATH, "//tbody[contains(@class, 'ant-table-tbody')]")))
 
-        time.sleep(2.5)
+        time.sleep(3)
 
         lp_market_res = []
         single_market_res = []
-
-        while not (lp_market_res and single_market_res):
+        total_width = driver.execute_script("return document.body.offsetWidth")
+        total_height = driver.execute_script("return document.body.scrollHeight")
+        driver.set_window_size(total_width+750, total_height)
+        if not (lp_market_res and single_market_res):
             lp_market_res = []
             single_market_res = []
-
+            print(1)
             tables = driver.find_elements(By.XPATH, "//tbody[contains(@class, 'ant-table-tbody')]")
             for table in tables:
                 rows = table.find_elements(By.TAG_NAME, "tr")
@@ -460,8 +458,7 @@ def get_heco_lendhub_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def is_valid_hfi_data(res):
@@ -552,8 +549,7 @@ def get_heco_hfi_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_eth_curve_data():
@@ -617,9 +613,8 @@ def get_eth_curve_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
-
+        kill_chrome(driver)
+        
 def get_eth_yfi_data():
     try:
         resp = json.loads(requests.get(YFI_API_URL).content)
@@ -809,9 +804,7 @@ def get_eth_sushi_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
-
+        kill_chrome(driver)
 
 # TODO: wait till Ziyue figure out how to handle APY
 def get_eth_uniswap_data():
@@ -851,24 +844,21 @@ def get_sc_pancakeswap_data():
             (By.TAG_NAME, "tbody")))
 
         # in case that the table is not loaded yet
-
         for i in range(10):
-            need_repeat_loop = False
+            print(i)
+            need_repeat_loop = True
             table = driver.find_element(By.TAG_NAME, "tbody")
             rows = table.find_elements(By.TAG_NAME, "tr")
 
             if len(rows) < 50 or not rows:
                 continue
-
             res = []
             for row in rows:
                 try:
                     cols = row.find_elements(By.TAG_NAME, "td")
                     apr = str.splitlines(cols[2].text)[1]
                     if apr == 'Loading...':
-                        need_repeat_loop = True
-                        time.sleep(1)
-                        break
+                        apr = '0.00%'
                     res.append(
                         {
                             'pair': cols[0].text,
@@ -877,6 +867,7 @@ def get_sc_pancakeswap_data():
                             'multiplier': str.splitlines(cols[4].text)[1]
                         }
                     )
+                    need_repeat_loop = False
                 except Exception as e:
                     print("get_sc_pancakeswap_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                     logger.error(
@@ -900,8 +891,7 @@ def get_sc_pancakeswap_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_sc_autofarm_data():
@@ -1049,7 +1039,7 @@ def get_sc_ellipsis_data():
             'tvl': None
         }
     finally:
-        driver.quit()
+        kill_chrome(driver)
 
 
 def get_sc_pancakebunny_data():
@@ -1128,12 +1118,11 @@ def get_sc_pancakebunny_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_sc_belt_data():
-    driver = create_browser(b_id=10)
+    driver = create_browser(network_needed='sc', b_id=10)
     try:
         driver.get(BELT_URL)
 
@@ -1193,8 +1182,7 @@ def get_sc_belt_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def convert_valid_aplaca_data(apy):
@@ -1212,15 +1200,14 @@ def get_sc_aplaca_data():
     driver = create_browser(network_needed='sc', b_id=11)
     try:
         driver.get(ALPACAFINANCE_URL)
-
         # click 'connect to a wallet' button
         try:
             main_window_handle = driver.current_window_handle
 
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 29).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button"))).click()
 
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 31).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/div[3]/div/div[2]/div/div[2]/div[2]/div/button"))).click()
 
             connect_metamask_v2(driver)
@@ -1233,7 +1220,8 @@ def get_sc_aplaca_data():
         driver.switch_to.window(main_window_handle)
 
         for i in range(10):
-            need_repeat_loop = False
+            need_repeat_loop = True
+            connection_status = driver.find_element(By.XPATH, '//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button').text
             table = driver.find_element(By.TAG_NAME, 'tbody')
             rows = table.find_elements(By.TAG_NAME, 'tr')
             rows = copy(rows)
@@ -1263,6 +1251,7 @@ def get_sc_aplaca_data():
                             'leverage': leverage
                         }
                     )
+                    need_repeat_loop = False
                 # if the data is not ready, we retry
                 except IndexError as e:
                     time.sleep(2)
@@ -1298,9 +1287,8 @@ def get_sc_aplaca_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
-
+        kill_chrome(driver)
+        
 
 def get_sc_bake_data():
     driver = create_browser(network_needed='sc', b_id=12)
@@ -1384,8 +1372,7 @@ def get_sc_bake_data():
             'tvl': None
         }
     finally:
-        if isinstance(driver, WebDriver):
-            driver.quit()
+        kill_chrome(driver)
 
 
 def get_task_needed(return_values):
@@ -1400,134 +1387,47 @@ def get_task_needed(return_values):
 def get_data_concurrently(task_list):
     return_values = run_in_threads(task_list)
 
-    task_needed = get_task_needed(return_values)
-    while task_needed:
-        new_task_list = [task_list[task_index] for task_index in task_needed]
-        new_return_values = run_in_threads(new_task_list)
-        for task_index in task_needed:
-            return_values[task_index] = new_return_values[task_needed.index(task_index)]
-        task_needed = get_task_needed(return_values)
+    # task_needed = get_task_needed(return_values)
+    # while task_needed:
+        # new_task_list = [task_list[task_index] for task_index in task_needed]
+        # new_return_values = run_in_threads(new_task_list)
+        # for task_index in task_needed:
+            # return_values[task_index] = new_return_values[task_needed.index(task_index)]
+        # task_needed = get_task_needed(return_values)
 
     return return_values
 
 
 def get_data():
-    # TASK_LIST_BY_POOL = {
-    #     'heco': [
-    #         (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
-    #         (get_heco_filda_data, ()),  # METAMASK NEEDED; 16s
-    #         (get_heco_coinwind_data, ()),  # METAMASK NEEDED; 13s
-    #         (get_heco_hfi_data, ()),  # METAMASK NEEDED; 15s
-    #         (get_heco_lendhub_data, ()),  # METAMASK NEEDED; 18s
-    #         (get_eth_curve_data, ()),  # Browser AND API access; # 15s
-    #     ],
-    #     'eth': [
-    #         (get_eth_yfi_data, ()),  # API
-    #         (get_eth_vesper_data, ()),  # API
-    #         (get_sc_venus_data, ()),  # API
-    #         (get_sc_autofarm_data, ()),  # API
-    #     ],
-    #     'sc': [
-    #         (get_sc_belt_data, ()),  # Browser NEEDED; 12s
-    #         (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
-    #         (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
-    #         # (get_sc_ellipsis_data, ()),  # METAMASK NEEDED; AA VPN CANNOT WORKING? 20s
-    #         (get_sc_pancakebunny_data, ()),  # METAMASK NEEDEDl; 17s
-    #         (get_sc_aplaca_data, ()),  # METAMASK NEEDED; 24s
-    #         (get_sc_bake_data, ())  # METAMASK NEEDED; 18s
-    #     ]
-    # }
-
-    TASK_LIST_BY_POOL = {
-        '1': [
-            # (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
-            (get_heco_filda_data, ()),  # METAMASK NEEDED; 16s
-            (get_heco_coinwind_data, ()),  # METAMASK NEEDED; 13s
-            (get_heco_hfi_data, ()),  # METAMASK NEEDED; 15s
-            (get_heco_lendhub_data, ()),  # METAMASK NEEDED; 18s
-            # (get_eth_curve_data, ()),  # Browser AND API access; # 15s
-        ],
-        '2': [
-            (get_eth_yfi_data, ()),  # API
-            (get_eth_vesper_data, ()),  # API
-            (get_sc_venus_data, ()),  # API
-            (get_sc_autofarm_data, ()),  # API
-        ],
-        '3': [
-            (get_sc_belt_data, ()),  # Browser NEEDED; 12s
-            # (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
-            # (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
-            # (get_sc_ellipsis_data, ()),  # METAMASK NEEDED; AA VPN CANNOT WORKING? 20s
-            (get_sc_pancakebunny_data, ()),  # METAMASK NEEDEDl; 17s
-            (get_sc_aplaca_data, ()),  # METAMASK NEEDED; 24s
-            (get_sc_bake_data, ())  # METAMASK NEEDED; 18s
-        ],
-        '4': [
-            (get_eth_sushi_data, ()),  # Browser NEEDED; 30s
-            (get_sc_pancakeswap_data, ()),  # Browser Needed; 23s
-            (get_heco_mdex_data, ()),  # Browser NEEDED; 15s
-            (get_eth_curve_data, ()),  # Browser AND API access; # 15s
-        ]
-    }
+    TASK_LIST = [
+        (get_sc_aplaca_data, ()),
+        (get_sc_pancakeswap_data, ()),
+        (get_eth_sushi_data, ()),
+        (get_eth_curve_data, ()),
+        (get_sc_bake_data, ()),
+        (get_sc_pancakebunny_data, ()),
+        (get_heco_filda_data, ()),
+        (get_heco_coinwind_data, ()),
+        (get_heco_hfi_data, ()),
+        (get_heco_lendhub_data, ()),
+        (get_sc_ellipsis_data, ()),
+        (get_heco_mdex_data, ()),
+        (get_sc_belt_data, ()),
+        (get_eth_yfi_data, ()),
+        (get_eth_vesper_data, ()),
+        (get_sc_venus_data, ()),
+        (get_sc_autofarm_data, ())
+    ]
 
     start_time = time.time()
 
-    res = {}
-
-    # res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
-
-    # res[1] = get_heco_mdex_data() # Done; Browser NEEDED; 15s
-    # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED; 16s
-    # res[3] = get_heco_coinwind_data() # Done; METAMASK NEEDED # 13s
-    # res[4] = get_heco_lendhub_data() # Done; METAMASK NEEDED # 18s
-    # res[5] = get_heco_hfi_data() # Done; METAMASK NEEDED; 15s
-    # res[6] = get_eth_curve_data() # Done; Browser Needed and Fast API access; # 15s
-    # res[7] = get_eth_yfi_data() # Done; Fast API access;
-    # res[8] = get_eth_vesper_data() # Done; Fast API access
-    # res[9] = get_eth_sushi_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
-    # res[11] = get_sc_pancakeswap_data() # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
-    # res[12] = get_sc_venus_data() # Done; Fast API access
-    # res[13] = get_sc_autofarm_data() # Done; Fast API access
-    # res[14] = get_sc_ellipsis_data() # Done; METAMASK NEEDED; TODO: AA VPN CANNOT WORKING? # 34s -> 20s
-    # res[15] = get_sc_pancakebunny_data() # Done; METAMASK NEEDED # 29s -> 17s
-    # res[16] = get_sc_belt_data() # Done; Browser NEEDED; 18s -> 12s
-    # res[17] = get_sc_aplaca_data() # Done; METAMASK NEEDED; 34s -> 24s
-    # res[18] = get_sc_bake_data() # Done; METAMASK NEEDED; 37s -> 18s
-
-    __import__('pudb').set_trace()
-    res['1'] = get_data_concurrently(TASK_LIST_BY_POOL.get('1'))
-
+    res = get_data_concurrently(TASK_LIST)
     print("--- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
-
-
-    res['2'] = get_data_concurrently(TASK_LIST_BY_POOL.get('2'))
-
+    print('START WRITING EXCEL...')
+    write_excel(res)
     print("--- %s seconds ---" % (time.time() - start_time))
-
-
-    start_time = time.time()
-
-    # res['eth'] = get_data_concurrently(TASK_LIST_BY_POOL.get('eth'))
-
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-    start_time = time.time()
-
-    res['3'] = get_data_concurrently(TASK_LIST_BY_POOL.get('3'))
-
-    print("--- %s seconds ---" % (time.time() - start_time))
-    start_time = time.time()
-
-    res['4'] = get_data_concurrently(TASK_LIST_BY_POOL.get('4'))
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-    # all_list = [] + TASK_LIST_BY_POOL.get('heco') + TASK_LIST_BY_POOL.get('eth') + TASK_LIST_BY_POOL.get('sc')
-    # res['all'] = get_data_concurrently(all_list)
-
-    __import__('pudb').set_trace()
-
 
 def get_data_serially():
     res = {}
@@ -1572,9 +1472,8 @@ def test_joblib():
         get_sc_venus_data,
         get_sc_autofarm_data
     ]
-    res = Parallel(n_jobs=-1)(delayed(job)() for job in job_list)
+    res = Parallel(n_jobs=-1, prefer="threads")(delayed(job)() for job in job_list)
     print("--- %s seconds ---" % (time.time() - start_time))
-
     start_time = time.time()
     print('START WRITING EXCEL...')
     write_excel(res)
@@ -1597,12 +1496,12 @@ if __name__ == '__main__':
     # generate_ellipsis_data()
     # generate_aplaca_data()
     # get_data_serially()
-    # get_data()
+    get_data()
     # get_data_concurrently()
 
     res = {}
 
-    res[1] = get_heco_mdex_data()  # Done; Browser NEEDED; 15s
+    # res[1] = get_heco_mdex_data()  # Done; Browser NEEDED; 15s
     # res[2] = get_heco_filda_data()  # Done; METAMASK NEEDED; 16s
     # res[3] = get_heco_coinwind_data()  # Done; METAMASK NEEDED # 13s
     # res[4] = get_heco_lendhub_data()  # Done; METAMASK NEEDED # 18s
@@ -1619,4 +1518,5 @@ if __name__ == '__main__':
     # res[16] = get_sc_belt_data()  # Done; Browser NEEDED; 18s -> 12s
     # res[17] = get_sc_aplaca_data()  # Done; METAMASK NEEDED; 34s -> 24s
     # res[18] = get_sc_bake_data()  # Done; METAMASK NEEDED; 37s -> 18s
-
+    
+    print(res)

@@ -1,0 +1,19 @@
+2021/04/15-18:53:08.872 4178 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_6/Default/Local Storage/leveldb/MANIFEST-000001
+2021/04/15-18:53:08.873 4178 Recovering log #646
+2021/04/15-18:53:08.884 4178 Level-0 table #648: started
+2021/04/15-18:53:08.905 4178 Level-0 table #648: 519409 bytes OK
+2021/04/15-18:53:08.906 4178 Recovering log #647
+2021/04/15-18:53:08.917 4178 Level-0 table #649: started
+2021/04/15-18:53:08.932 4178 Level-0 table #649: 519474 bytes OK
+2021/04/15-18:53:08.936 4178 Delete type=0 #647
+2021/04/15-18:53:08.936 4178 Delete type=0 #646
+2021/04/15-18:53:08.938 417a Compacting 4@0 + 1@1 files
+2021/04/15-18:53:08.976 417a Generated table #651@0: 9 keys, 519902 bytes
+2021/04/15-18:53:08.976 417a Compacted 4@0 + 1@1 files => 519902 bytes
+2021/04/15-18:53:08.979 417a compacted to: files[ 0 1 0 0 0 0 0 ]
+2021/04/15-18:53:08.981 417a Delete type=2 #645
+2021/04/15-18:53:08.981 417a Delete type=2 #641
+2021/04/15-18:53:08.981 417a Delete type=2 #648
+2021/04/15-18:53:08.981 417a Delete type=2 #643
+2021/04/15-18:53:08.981 417a Delete type=2 #649
+2021/04/15-18:54:01.423 4178 Level-0 table #653: started

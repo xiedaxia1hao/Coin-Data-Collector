@@ -1,5 +1,0 @@
-2021/04/15-22:13:01.542 17960 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_3/Default/Local Storage/leveldb/MANIFEST-000001
-2021/04/15-22:13:01.543 17960 Recovering log #13
-2021/04/15-22:13:01.545 17960 Level-0 table #16: started
-2021/04/15-22:13:01.553 17960 Level-0 table #16: 9129 bytes OK
-2021/04/15-22:13:01.556 17960 Delete type=0 #13

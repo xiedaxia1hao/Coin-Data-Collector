@@ -1,3 +1,4 @@
-2021/04/15-18:48:55.819 367a Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/Local Storage/leveldb/MANIFEST-000001
-2021/04/15-18:48:55.820 367a Recovering log #29
-2021/04/15-18:48:55.821 367a Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/Local Storage/leveldb/000029.log 
+2021/04/15-22:11:31.777 175d4 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/Local Storage/leveldb/MANIFEST-000001
+2021/04/15-22:11:31.784 175d4 Recovering log #32
+2021/04/15-22:11:31.785 175d4 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_9/Default/Local Storage/leveldb/000032.log 
+2021/04/15-22:12:38.673 175d6 Level-0 table #36: started

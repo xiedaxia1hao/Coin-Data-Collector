@@ -1,14 +1,14 @@
-2021/04/15-18:42:47.439 1729 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/MANIFEST-000001
-2021/04/15-18:42:47.439 1729 Recovering log #334
-2021/04/15-18:42:47.439 1729 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/000334.log 
-2021/04/15-18:42:47.440 1729 Delete type=2 #332
-2021/04/15-18:42:48.059 1729 Level-0 table #339: started
-2021/04/15-18:42:48.062 1729 Level-0 table #339: 1661 bytes OK
-2021/04/15-18:42:48.065 1729 Delete type=0 #334
-2021/04/15-18:42:48.065 1729 Manual compaction at level-0 from '\x00X\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00Y\x00\x00\x00' @ 0 : 0; will stop at '\x00X\x00\x00\x05' @ 3745 : 1
-2021/04/15-18:42:48.065 1729 Compacting 1@0 + 1@1 files
-2021/04/15-18:42:48.068 1729 Generated table #340@0: 18 keys, 1290 bytes
-2021/04/15-18:42:48.068 1729 Compacted 1@0 + 1@1 files => 1290 bytes
-2021/04/15-18:42:48.070 1729 compacted to: files[ 0 1 1 0 0 0 0 ]
-2021/04/15-18:42:48.071 1729 Delete type=2 #339
-2021/04/15-18:42:48.071 1729 Manual compaction at level-0 from '\x00X\x00\x00\x05' @ 3745 : 1 .. '\x00Y\x00\x00\x00' @ 0 : 0; will stop at (end)
+2021/04/15-22:09:20.571 16be7 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/MANIFEST-000001
+2021/04/15-22:09:20.571 16be7 Recovering log #454
+2021/04/15-22:09:20.571 16be7 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_10/Default/IndexedDB/https_beta.belt.fi_0.indexeddb.leveldb/000454.log 
+2021/04/15-22:09:20.572 16be7 Delete type=2 #452
+2021/04/15-22:09:21.211 16bea Level-0 table #459: started
+2021/04/15-22:09:21.213 16bea Level-0 table #459: 1662 bytes OK
+2021/04/15-22:09:21.215 16bea Delete type=0 #454
+2021/04/15-22:09:21.215 16bea Manual compaction at level-0 from '\x00v\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00w\x00\x00\x00' @ 0 : 0; will stop at '\x00v\x00\x00\x05' @ 5035 : 1
+2021/04/15-22:09:21.215 16bea Compacting 1@0 + 1@1 files
+2021/04/15-22:09:21.218 16bea Generated table #460@0: 18 keys, 1290 bytes
+2021/04/15-22:09:21.218 16bea Compacted 1@0 + 1@1 files => 1290 bytes
+2021/04/15-22:09:21.222 16bea compacted to: files[ 0 1 1 0 0 0 0 ]
+2021/04/15-22:09:21.222 16bea Delete type=2 #459
+2021/04/15-22:09:21.222 16bea Manual compaction at level-0 from '\x00v\x00\x00\x05' @ 5035 : 1 .. '\x00w\x00\x00\x00' @ 0 : 0; will stop at (end)

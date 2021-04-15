@@ -1,3 +1,3 @@
-2021/04/15-18:52:26.361 3ed4 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_7/Default/shared_proto_db/metadata/MANIFEST-000001
-2021/04/15-18:52:26.362 3ed4 Recovering log #3
-2021/04/15-18:52:26.362 3ed4 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_7/Default/shared_proto_db/metadata/000003.log 
+2021/04/15-22:14:51.328 18320 Reusing MANIFEST /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_7/Default/shared_proto_db/metadata/MANIFEST-000001
+2021/04/15-22:14:51.328 18320 Recovering log #3
+2021/04/15-22:14:51.329 18320 Reusing old log /home/ubuntu/workspace/Coin-Data-Collector/user_data/data_7/Default/shared_proto_db/metadata/000003.log 

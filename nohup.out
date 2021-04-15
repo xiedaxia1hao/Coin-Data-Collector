@@ -1,4 +1,0 @@
-/home/ubuntu/workspace/Coin-Data-Collector/venv/lib/python3.8/site-packages/joblib/externals/loky/backend/resource_tracker.py:318: UserWarning: resource_tracker: There appear to be 12 leaked semlock objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '
-/home/ubuntu/workspace/Coin-Data-Collector/venv/lib/python3.8/site-packages/joblib/externals/loky/backend/resource_tracker.py:318: UserWarning: resource_tracker: There appear to be 2 leaked folder objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '

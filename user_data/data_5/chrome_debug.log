@@ -1,20 +1,27 @@
-[19143:19237:0415/185452.225858:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19143:19237:0415/185452.225911:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
-[19143:19237:0415/185452.231433:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19143:19237:0415/185452.231669:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19179:19179:0415/185452.305925:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
-[19143:19143:0415/185452.360262:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
-[19143:19143:0415/185452.388679:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19143:19143:0415/185452.389539:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19143:19143:0415/185452.391473:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19218:19229:0415/185452.422868:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
-[19255:19255:0415/185452.435023:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
-[19143:19143:0415/185453.896089:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
-[19143:19143:0415/185454.920823:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
-[19143:19143:0415/185454.944987:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19143:19143:0415/185454.945457:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19143:19143:0415/185454.947634:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19143:19158:0415/185714.646684:ERROR:zygote_communication_linux.cc(276)] Failed to send GetTerminationStatus message to zygote
-[19143:19158:0415/185714.687486:WARNING:zygote_communication_linux.cc(288)] Socket closed prematurely.
-[19143:19158:0415/185714.795045:ERROR:zygote_communication_linux.cc(276)] Failed to send GetTerminationStatus message to zygote
-[19143:19158:0415/185714.795091:WARNING:zygote_communication_linux.cc(288)] Socket closed prematurely.
+[96971:97065:0415/221312.319918:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[96971:97065:0415/221312.320472:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[96971:97065:0415/221312.321606:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[96971:97065:0415/221312.322161:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[97008:97008:0415/221312.347326:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[97084:97084:0415/221312.378017:ERROR:gpu_init.cc(426)] Passthrough is not supported, GL is egl
+[97044:97061:0415/221312.404103:ERROR:command_buffer_proxy_impl.cc(121)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[97084:97084:0415/221312.412384:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
+[96971:96971:0415/221312.491294:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[96971:96971:0415/221312.511191:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221312.512081:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221312.513990:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221312.514788:INFO:CONSOLE(8)] "Removing intrinsics.%RegExpPrototype%.hasIndices", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221313.285198:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[96971:96971:0415/221314.016644:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[96971:96971:0415/221314.031305:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221314.031723:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221314.033390:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221314.033875:INFO:CONSOLE(8)] "Removing intrinsics.%RegExpPrototype%.hasIndices", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[96971:96971:0415/221329.167259:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[96971:96971:0415/221332.183066:INFO:CONSOLE(2)] "biki 23723024.68271364", source: https://hfi.one/_nuxt/93bccc3ffc586677a210.js (2)
+[96971:96971:0415/221332.196494:INFO:CONSOLE(2)] "filda 506187.67145239766", source: https://hfi.one/_nuxt/93bccc3ffc586677a210.js (2)
+[96971:96971:0415/221332.196919:INFO:CONSOLE(2)] "lhb 4316157.741659794", source: https://hfi.one/_nuxt/93bccc3ffc586677a210.js (2)
+[97010:97021:0415/221334.848967:WARNING:sqlite_persistent_store_backend_base.cc(171)] Failed to post task from FlushAndNotifyInBackground@../../net/extras/sqlite/sqlite_persistent_store_backend_base.cc:220 to client_task_runner_.
+[97010:97021:0415/221334.849050:WARNING:sqlite_persistent_store_backend_base.cc(171)] Failed to post task from FlushAndNotifyInBackground@../../net/extras/sqlite/sqlite_persistent_store_backend_base.cc:220 to client_task_runner_.
+[96971:96971:0415/221334.862291:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

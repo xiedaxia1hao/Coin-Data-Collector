@@ -1,57 +1,27 @@
-[19531:19627:0415/185500.871441:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19531:19627:0415/185500.871500:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
-[19531:19627:0415/185500.871688:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19531:19627:0415/185500.871911:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
-[19568:19568:0415/185500.903856:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
-[19608:19619:0415/185500.964918:ERROR:command_buffer_proxy_impl.cc(122)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
-[19645:19645:0415/185500.978761:WARNING:ipc_message_attachment_set.cc(49)] MessageAttachmentSet destroyed with unconsumed attachments: 0/1
-[19531:19531:0415/185501.036783:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
-[19531:19531:0415/185501.056646:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19531:19531:0415/185501.057009:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19531:19531:0415/185501.057246:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19531:19531:0415/185502.526818:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
-[19531:19531:0415/185503.834967:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
-[19531:19531:0415/185503.883353:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19531:19531:0415/185503.883801:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19531:19531:0415/185503.885322:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
-[19629:19640:0415/185506.237229:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185506.249297:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185506.271208:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185506.294385:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185506.311427:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185506.312745:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.086752:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.087422:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.471455:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.472533:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.495834:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185507.499352:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.071597:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.072727:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.095878:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.096804:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.671544:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.672637:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.695766:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185508.696494:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.271606:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.272719:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.295805:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.296550:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.854985:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185509.856077:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185510.926878:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185510.928688:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.067030:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.072385:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.108384:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.112323:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.463122:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.465235:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.766993:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185511.768577:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185512.732505:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185512.739803:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19629:19640:0415/185513.013091:ERROR:tile_manager.cc(811)] WARNING: tile memory limits exceeded, some content may not draw
-[19531:19546:0415/185714.646698:ERROR:zygote_communication_linux.cc(276)] Failed to send GetTerminationStatus message to zygote
-[19531:19546:0415/185714.698343:WARNING:zygote_communication_linux.cc(288)] Socket closed prematurely.
+[97415:97415:0415/221327.704392:ERROR:viz_main_impl.cc(150)] Exiting GPU process due to errors during initialization
+[97456:97456:0415/221327.725295:ERROR:gpu_init.cc(426)] Passthrough is not supported, GL is egl
+[97377:97478:0415/221327.793171:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[97377:97478:0415/221327.793214:WARNING:property.cc(144)] DaemonVersion: GetAndBlock: failed.
+[97377:97478:0415/221327.793387:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[97377:97478:0415/221327.793850:ERROR:object_proxy.cc(621)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[97377:97377:0415/221328.177085:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[97377:97377:0415/221328.197066:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221328.197152:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221328.197639:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221328.197928:INFO:CONSOLE(8)] "Removing intrinsics.%RegExpPrototype%.hasIndices", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221329.706776:INFO:CONSOLE(16)] "Invalid asm.js: Unexpected token", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/bg-libs.js (16)
+[97377:97377:0415/221331.607805:INFO:CONSOLE(1)] "Setting up Sentry Remote Error Reporting for 'production': SENTRY_DSN", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (1)
+[97377:97377:0415/221331.661245:INFO:CONSOLE(8)] "Removing intrinsics.Promise.any", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221331.670713:INFO:CONSOLE(8)] "Removing intrinsics.Reflect.@@toStringTag", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221331.681466:INFO:CONSOLE(8)] "Removing intrinsics.%StringPrototype%.replaceAll", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221331.696967:INFO:CONSOLE(8)] "Removing intrinsics.%RegExpPrototype%.hasIndices", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/initSentry.js (8)
+[97377:97377:0415/221345.530454:INFO:CONSOLE(1)] "MetaMask: The event 'close' is deprecated and may be removed in the future. Please use 'disconnect' instead.
+For more information, see: https://eips.ethereum.org/EIPS/eip-1193#disconnect", source: chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/inpage.js (1)
+[97377:97377:0415/221345.737575:INFO:CONSOLE(2)] "chainId:128", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221345.794470:INFO:CONSOLE(2)] "init done", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221345.821767:INFO:CONSOLE(2)] "web3 ok", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221345.959801:INFO:CONSOLE(2)] "lhb price 457243", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221346.168823:INFO:CONSOLE(2)] "account :0x069DA7908FB1398E748de9A0555f3ECb686E4433", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221346.247383:INFO:CONSOLE(2)] "getAccountLimit", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221346.304369:INFO:CONSOLE(2)] ",0,0", source: https://www.lendhub.org/_nuxt/6412b39.js (2)
+[97377:97377:0415/221353.111416:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

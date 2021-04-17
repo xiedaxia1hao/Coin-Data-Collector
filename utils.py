@@ -1,4 +1,5 @@
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium import webdriver
 from multiprocessing.pool import ThreadPool
 from logging import getLogger
@@ -9,6 +10,7 @@ import multiprocessing as mp
 import random
 import time
 import os
+import signal
 import traceback
 import platform
 from constants import SEED_PHRASE, METAMASK_PASSWORD, HECO_NETWORK_CONFIG, SMART_CHAIN_NETWORK_CONFIG, \
@@ -23,32 +25,40 @@ METAMASK_EXTENSION_FILE_NAME = METAMASK_EXTENSION_NAME + '.crx'
 METAMASK_HOMEPAGE_URL = 'chrome-extension://{}'.format(METAMASK_EXTENSION_NAME)
 
 
-def create_browser(show_browser=True, network_needed=None, b_id=-1):
+def create_browser(webdriver_path=None, show_browser=True, network_needed=None, b_id=-1):
+    from pyvirtualdisplay import Display
+    display = Display(visible=0, size=(2400, 2400))
+    display.start()
 
     if platform.system() == 'Darwin':
         webdriver_path = './chromedriver_mac'
     else:
-        webdriver_path = './chromedriver_linux'
+        webdriver_path = '/usr/bin/chromedriver_linux'
 
     print("--remote-debugging-port={}".format(str(b_id)))
     # create a selenium object that mimics the browser
     browser_options = Options()
     user_data_dir = "./user_data/data_{}".format(b_id)
     browser_options.add_argument('--no-sandbox')
+    browser_options.add_argument("--disable-setuid-sandbox")
     browser_options.add_argument("--user-data-dir={}".format(user_data_dir))
-    browser_options.add_argument("--disable-dev-shm-usage")
+    # browser_options.add_argument("--disable-dev-shm-usage")
     # browser_options.add_argument("--remote-debugging-port={}".format(str(b_id)))
-    browser_options.add_argument("--verbose")  # detail log
+    # browser_options.add_argument("--verbose")  # detail log
 
     # headless tag created an invisible browser
-    if not show_browser:
+    if not  show_browser:
         browser_options.add_argument("--headless")
 
     print('EXTENSION ADDING... b-id: {}'.format(b_id))
     browser_options.add_extension(os.path.abspath(METAMASK_EXTENSION_FILE_NAME))
     print('EXTENSION ADD... b-id: {}'.format(b_id))
     # chromedriver_mac version: 89.0.4389.114
-    browser = webdriver.Chrome(webdriver_path, chrome_options=browser_options)
+    try:
+        browser = webdriver.Chrome(webdriver_path, chrome_options=browser_options)
+    except Exception as e:
+        logger.info('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc()))     
+        return
     # print(browser.capabilities['browserVersion'])  # 89.0.4389.114
     # print(browser.capabilities['chrome']['chromedriverVersion']) # 2.41.578706 (5f725d1b4f0a4acbf5259df887244095596231db)
 
@@ -266,3 +276,33 @@ def human_format(num):
         magnitude += 1
         num /= 1000.0
     return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
+
+
+def kill_chrome(driver):
+    if isinstance(driver, WebDriver):
+        try:
+            chrome_pid = int(driver.service.process.pid)
+            driver.close()
+            driver.quit()
+            try:
+                os.kill(chrome_pid, signal.SIGTERM)
+            except ProcessLookupError as e:
+                pass
+            except Exception as e:
+                print('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
+                logger.error('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
+        except Exception as e:
+            print('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
+            logger.error('kill chrome error: {}.{}.{}'.format(e.__class__.__name__, e, traceback.format_exc()))
+
+def get_screenshot_v1(driver, path):
+    el = driver.find_element_by_tag_name('body')
+    el.screenshot(path)
+
+
+def get_screenshot_v2(driver, path):
+    total_width = driver.execute_script("return document.body.offsetWidth")
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    driver.set_window_size(total_width, total_height)
+    driver.save_screenshot(path)
+

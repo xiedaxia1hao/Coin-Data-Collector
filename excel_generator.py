@@ -403,7 +403,7 @@ if __name__ == '__main__':
     write_generic_data(data_excel, VESPER_RESP, 'Vesper', VESPER_URL)
     write_generic_data(data_excel, MDEX_RESP, 'MDEX', MDEX_URL, sorted_field='APY')
     write_generic_data(data_excel, FILDA_RESP, 'FILDA', FILDA_URL)
-    write_generic_data(data_excel, COINWIND_RESP, 'CoinWind', COINWIND_URL, sorted_field='APY (Compound Interest)')
+    write_generic_data(data_excel, COINWIND_RESP, 'CoinWind', COINWIND_URL, sorted_field='APY')
     write_lendhub_data(data_excel, LENDHUB_RESP, 'LendHub', LENDHUB_URL)
     write_hfi_data(data_excel, HFI_RESP, 'hecoFi', HFI_URL, sorted_field='APY')
 

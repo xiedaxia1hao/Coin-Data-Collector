@@ -1,16 +1,15 @@
 import time
 from copy import copy
-
+from pyvirtualdisplay import Display
 from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from joblib import Parallel, delayed
-
 from constants import MDEX_URL, VENUS_API_URL, COINWIND_URL, FILDA_URL, LENDHUB_URL, HFI_URL, CURVE_API_URL, \
     YFI_API_URL, VESPER_API_URL, SUSHI_URL, PANCAKESWAP_URL, AUTOFARM_API_URL, ELLIPSIS_URL, PANCAKEBUNNY_URL, BELT_URL, \
     ALPACAFINANCE_URL, BAKE_URL, ALPACAFINANCE_TVL_URL, BAKE_TVL_URL, PANCAKESWAP_TVL_URL, SUSHI_TVL_URL, CURVE_TVL_URL
 from excel_generator import write_excel, write_ellipsis_excel, write_aplaca_excel
-from utils import create_browser, run_in_threads, human_format, kill_chrome, get_screenshot_v1, get_screenshot_v2
+from utils import create_browser, run_in_threads, human_format, kill_chrome, get_screenshot_v1, get_screenshot_v2, expand_screen
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -18,6 +17,7 @@ import requests
 import json
 import traceback
 import logging
+import locale
 import timeout_decorator
 logger = logging.getLogger(__name__)
 
@@ -38,9 +38,9 @@ def get_heco_mdex_data():
         try:
             connect_metamask_v2(driver)
         except Exception as e:
-            print("get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+            print("get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
             logger.error(
-                "get_heco_coinwind_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                "get_heco_mdex_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         # Switch back to main tab
         driver.switch_to.window(main_window_handle)
@@ -134,7 +134,7 @@ def get_sc_venus_data():
 
 
 def is_valid_coinwind_data(res):
-    check_all_apy_validity = [_v == '0.00%' for row in res for _k, _v in row.items() if _k == 'APY (Compound Interest)']
+    check_all_apy_validity = [_v == '0.00%' for row in res for _k, _v in row.items() if _k == 'APY']
     count_invalid_apy_num = sum(check_all_apy_validity)
     invalid_apy_percentage = count_invalid_apy_num * 1.0 / len(check_all_apy_validity) if len(check_all_apy_validity) > 0 else 0
     if invalid_apy_percentage > 0.2:
@@ -163,17 +163,12 @@ def get_heco_coinwind_data():
         driver.switch_to.window(main_window_handle)
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")))
+            (By.XPATH, "//div[contains(@class, 'pools__item')]")))
+        expand_screen(driver)
         for _ in range(10):
-            rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-grid-xs-12')]")
+            rows = driver.find_elements(By.XPATH, "//div[contains(@class, 'pools__item')]")
             rows = copy(rows)
             res = []
-            el = driver.find_element_by_tag_name('body')
-            el.screenshot('coinwind.png')
-            elem = driver.find_element_by_xpath("//*")
-            source_code = elem.get_attribute("outerHTML")
-            with open('coinwind.html', 'w') as f:
-                f.write(source_code)
             for i, row in enumerate(rows):
                 try:
                     # Sample row.text:
@@ -181,11 +176,11 @@ def get_heco_coinwind_data():
                     items = str.splitlines(row.text)
                     res.append(
                         {
-                            'Assets U': items[0],
-                            'Assets D': items[1],
-                            'Earned (MDX)': items[6],
-                            'APY (Compound Interest)': items[11],
-                            items[12]: items[13]
+                            items[5]: items[6],
+                            items[7]: items[8],
+                            items[9]: items[10],
+                            items[2]: items[4],
+                            'percentage': items[11]
                         }
                     )
                 except Exception as e:
@@ -197,7 +192,7 @@ def get_heco_coinwind_data():
             else:
                 break
         try:
-            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[1]/div[3]/div[1]/div[2]").text
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/main/div[1]/div/div[2]/div/ul/li[1]/div[2]").text
         except Exception as e:
             tvl = None
             print("get_heco_coinwind_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
@@ -719,11 +714,89 @@ def get_eth_vesper_data():
         }
 
 
+def get_eth_sushi_data_v2():
+    driver = create_browser(b_id=6)
+    try:
+        driver.get(SUSHI_URL)
+        expand_screen(driver)
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+        # expand all data
+        try:
+            WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.XPATH, "/html/body/div/div/main/div[2]/div/div/div[2]/div/div[2]/div"))).click()
+            WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[3]/ul/li[4]"))).click()
+        except Exception as e:
+            pass
+
+
+        table = driver.find_element(By.TAG_NAME, "tbody")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+
+        # in case that the table is not loaded yet
+        for i in range(10):
+            print(i)
+            if len(rows) < 12 or not rows:
+                time.sleep(1)
+                table = driver.find_element(By.TAG_NAME, "tbody")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+            else:
+                break
+
+        res = []
+        tvl = 0
+        for row in rows:
+            try:
+                cols = row.find_elements(By.TAG_NAME, "td")
+                name = row.find_element(By.TAG_NAME, "th").text
+                roi = str.split(cols[1].text, '/')
+                res.append(
+                    {
+                        'name': name,
+                        'Reward per $1,000': cols[0].text,
+                        'Yearly ROI': "{}".format(roi[0]),
+                        'Monthly ROI': "{}".format(roi[1]),
+                        'Daily ROI': "{}".format(roi[2]),
+                        'Base Reserve': cols[2].text,
+                        'Quote Reserve': cols[3].text,
+                        'TVL': cols[4].text
+                    }
+                )
+
+                try:
+                    tvl += locale.atof(cols[4].text[1:])
+                    # print(lddocale.atof(cols[4].text[1:]))
+                except Exception as e:
+                    tvl += 0
+                    print("convert sushi tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                    logger.error(
+                        "convert sushi tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+
+            except Exception as e:
+                print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                logger.error(
+                    "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+                continue
+        return {
+            'data': res,
+            'tvl': '${:,}'.format(round(tvl, 2))
+        }
+    except Exception as e:
+        print("get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        logger.error(
+            "get_eth_sushi_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
+        return {
+            'data': {},
+            'tvl': None
+        }
+    finally:
+        kill_chrome(driver)
+
+
 def get_eth_sushi_data():
     driver = create_browser(b_id=6)
     try:
         driver.get(SUSHI_URL)
         main_window_handle = driver.current_window_handle
+        expand_screen(driver)
 
         # while open the sushi url (loads slowly), we go to sushi tvl site to get tvl
         try:
@@ -965,7 +1038,7 @@ def get_sc_ellipsis_data():
         driver.switch_to.window(main_window_handle)
 
         # max retry times: 10
-        for i in range(10):
+        for i in range(5):
             print(i)
             res = {}
             tables = driver.find_elements(By.TAG_NAME, 'fieldset')
@@ -1066,8 +1139,8 @@ def get_sc_pancakebunny_data():
 
         res = []
 
-        # max retry time: 20
-        for i in range(20):
+        # max retry time: 10
+        for i in range(10):
             print(i)
             if not res:
                 res = []
@@ -1204,10 +1277,10 @@ def get_sc_aplaca_data():
         try:
             main_window_handle = driver.current_window_handle
 
-            WebDriverWait(driver, 29).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 8).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button"))).click()
 
-            WebDriverWait(driver, 31).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located(
                 (By.XPATH, "/html/body/div[3]/div/div[2]/div/div[2]/div[2]/div/button"))).click()
 
             connect_metamask_v2(driver)
@@ -1218,7 +1291,7 @@ def get_sc_aplaca_data():
             logger.error("get_sc_aplaca_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-
+        time.sleep(2)
         for i in range(10):
             need_repeat_loop = True
             connection_status = driver.find_element(By.XPATH, '//*[@id=\"root\"]/div/section/section/header/div[1]/div[3]/span[1]/button').text
@@ -1227,10 +1300,10 @@ def get_sc_aplaca_data():
             rows = copy(rows)
             res = []
             for row in rows:
-                if not row.text:
-                    continue
-                cols = row.find_elements(By.TAG_NAME, 'td')
                 try:
+                    if not row.text:
+                        continue
+                    cols = row.find_elements(By.TAG_NAME, 'td')
                     name = str.splitlines(cols[1].text)[1]
                     apy_u = convert_valid_aplaca_data(str.splitlines(cols[2].text)[0])
                     apy_d = convert_valid_aplaca_data(str.splitlines(cols[2].text)[1])
@@ -1267,8 +1340,11 @@ def get_sc_aplaca_data():
 
         try:
             driver.get(ALPACAFINANCE_TVL_URL)
-            WebDriverWait(driver, 20).until(EC.presence_of_element_located(
-                (By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span"))).click()
+            total_width = driver.execute_script("return document.body.offsetWidth")
+            total_height = driver.execute_script("return document.body.scrollHeight")
+            driver.set_window_size(total_width + 750, total_height)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                (By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span")))
             tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/section/section/section/main/div[1]/div[1]/div[2]/div/div[2]/div/div/div/div[2]/div/div/span").text
         except Exception as e:
             tvl = None
@@ -1294,16 +1370,16 @@ def get_sc_bake_data():
     driver = create_browser(network_needed='sc', b_id=12)
     try:
         driver.get(BAKE_URL)
-        total_width = driver.execute_script("return document.body.offsetWidth")
-        total_height = driver.execute_script("return document.body.scrollHeight")
-        driver.set_window_size(total_width + 750, total_height + 2500)
+        # total_width = driver.execute_script("return document.body.offsetWidth")
+        # total_height = driver.execute_script("return document.body.scrollHeight")
+        # driver.set_window_size(total_width + 750, total_height + 2500)
         try:
             main_window_handle = driver.current_window_handle
 
             WebDriverWait(driver, 3).until(EC.presence_of_element_located(
-                (By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/button"))).click()
+                (By.XPATH, "//*[@id=\"BodyContainer\"]/div[1]/div[4]/button"))).click()
 
-            WebDriverWait(driver, 1).until(EC.presence_of_element_located(
+            WebDriverWait(driver, 3).until(EC.presence_of_element_located(
                 (By.XPATH, "//*[@id=\"connect-METAMASK\"]"))).click()
 
             connect_metamask_v2(driver)
@@ -1315,8 +1391,6 @@ def get_sc_bake_data():
                 "get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
 
         driver.switch_to.window(main_window_handle)
-        get_screenshot_v1(driver, './bake_v1.png')
-        get_screenshot_v2(driver, './bake_v2.png')
         for i in range(10):
             table = driver.find_element(By.XPATH, "//*[@id=\"BodyContainer\"]/div[1]/div[5]")
             rows = copy(table.find_elements(By.XPATH, "./div[*]"))
@@ -1342,7 +1416,7 @@ def get_sc_bake_data():
                         "get_sc_bake_data error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
                     continue
 
-            if all([row.get('roi') != 'Loading ...' for row in res]):
+            if table.text != '' and all([row.get('roi') != 'Loading ...' for row in res]):
                 break
             else:
                 time.sleep(1)
@@ -1351,7 +1425,7 @@ def get_sc_bake_data():
         driver.get(BAKE_TVL_URL)
         for i in range(10):
             try:
-                tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div/div[2]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span").text
+                tvl = driver.find_element(By.XPATH, "//*[@id=\"BodyContainer\"]/div[1]/div[4]/div/div[1]/div[2]/div[3]/div[2]/div/span").text
                 if tvl == '0.000':
                     time.sleep(1)
                     continue
@@ -1459,7 +1533,7 @@ def test_joblib():
     job_list = [
         get_sc_aplaca_data,
         get_sc_pancakeswap_data,
-        get_eth_sushi_data,
+        get_eth_sushi_data_v2,
         get_eth_curve_data,
         get_sc_bake_data,
         get_sc_pancakebunny_data,
@@ -1475,7 +1549,8 @@ def test_joblib():
         get_sc_venus_data,
         get_sc_autofarm_data
     ]
-    res = Parallel(n_jobs=-1, backend="loky")(delayed(job)() for job in job_list)
+    # res = Parallel(n_jobs=-1, backend='loky')(delayed(job)() for job in job_list)
+    res = Parallel(n_jobs=-1, prefer='threads')(delayed(job)() for job in job_list)
     print("--- %s seconds ---" % (time.time() - start_time))
     start_time = time.time()
     print('START WRITING EXCEL...')
@@ -1495,7 +1570,18 @@ def generate_aplaca_data():
 
 if __name__ == '__main__':
     # get_heco_mdex_data()
-    test_joblib()
+    try:
+        # display = Display(visible=0, size=(2400, 2400))
+        # display.start()
+        pass
+        # test_joblib()
+        # get_data()
+    except Exception as e:
+        print('test_joblib failed...')
+        logger.info('test_joblib failed....')
+    finally:
+        pass
+        # display.stop()
     # generate_ellipsis_data()
     # generate_aplaca_data()
     # get_data_serially()
@@ -1512,7 +1598,7 @@ if __name__ == '__main__':
     # res[6] = get_eth_curve_data()  # Done; Browser Needed and Fast API access; # 15s
     # res[7] = get_eth_yfi_data()  # Done; Fast API access;
     # res[8] = get_eth_vesper_data()  # Done; Fast API access
-    # res[9] = get_eth_sushi_data()  # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
+    res[9] = get_eth_sushi_data_v2()  # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
     # res[11] = get_sc_pancakeswap_data()  # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
     # res[12] = get_sc_venus_data()  # Done; Fast API access
     # res[13] = get_sc_autofarm_data()  # Done; Fast API access

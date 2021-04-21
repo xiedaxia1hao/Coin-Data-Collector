@@ -1,5 +1,6 @@
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.common.exceptions import InvalidArgumentException
 from selenium import webdriver
 from multiprocessing.pool import ThreadPool
 from logging import getLogger
@@ -42,12 +43,14 @@ def create_browser(webdriver_path=None, show_browser=True, network_needed=None, 
     browser_options.add_argument('--no-sandbox')
     browser_options.add_argument("--disable-setuid-sandbox")
     browser_options.add_argument("--user-data-dir={}".format(user_data_dir))
+    browser_options.add_argument('--no-proxy-server')
+ 
     # browser_options.add_argument("--disable-dev-shm-usage")
     # browser_options.add_argument("--remote-debugging-port={}".format(str(b_id)))
     # browser_options.add_argument("--verbose")  # detail log
 
     # headless tag created an invisible browser
-    if not  show_browser:
+    if not show_browser:
         browser_options.add_argument("--headless")
 
     print('EXTENSION ADDING... b-id: {}'.format(b_id))
@@ -57,8 +60,14 @@ def create_browser(webdriver_path=None, show_browser=True, network_needed=None, 
     try:
         browser = webdriver.Chrome(webdriver_path, chrome_options=browser_options)
     except Exception as e:
-        logger.info('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc()))     
-        return
+        print('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc()))
+        logger.info('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc())) 
+        return create_browser(webdriver_path, show_browser, network_needed, random.randint(10000, 20000))
+    # except Exception as e:
+        # print('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc()))
+        # logger.info('create browser failed: {}. {}. {}'.format(e.__class__.__name__, e, traceback.format_exc()))     
+        # return 
+        # return create_browser(webdriver_path, show_browser, network_needed, b_id)
     # print(browser.capabilities['browserVersion'])  # 89.0.4389.114
     # print(browser.capabilities['chrome']['chromedriverVersion']) # 2.41.578706 (5f725d1b4f0a4acbf5259df887244095596231db)
 
@@ -306,3 +315,7 @@ def get_screenshot_v2(driver, path):
     driver.set_window_size(total_width, total_height)
     driver.save_screenshot(path)
 
+def expand_screen(driver):
+    total_width = driver.execute_script("return document.body.offsetWidth")
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    driver.set_window_size(total_width+750, total_height)

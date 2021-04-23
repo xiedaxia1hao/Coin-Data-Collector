@@ -903,8 +903,8 @@ def get_sc_pancakeswap_data():
                     break
 
             WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                (By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]")))
-            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div[2]/div[2]/div[3]/div[2]/div/h2[2]").text
+                (By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div/div[2]/div[3]/div[2]/div/h2[2]")))
+            tvl = driver.find_element(By.XPATH, "//*[@id=\"root\"]/div[1]/div/div[2]/div/div[2]/div[3]/div[2]/div/h2[2]").text
         except Exception as e:
             tvl = None
             print("get_sc_pancakeswap_data tvl error:{}.{}.{}".format(e.__class__.__name__, e, traceback.format_exc()))
@@ -923,7 +923,10 @@ def get_sc_pancakeswap_data():
             table = driver.find_element(By.TAG_NAME, "tbody")
             rows = table.find_elements(By.TAG_NAME, "tr")
 
-            if len(rows) < 50 or not rows:
+            if len(rows) < 100 or not rows: 
+                for j in range(15):
+                    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                    time.sleep(0.2)
                 continue
             res = []
             for row in rows:
@@ -1214,7 +1217,7 @@ def get_sc_belt_data():
         res = []
         for row in rows:
             try:
-                name = str.splitlines(row.find_element(By.CLASS_NAME, 'name').text)[2]
+                name = str.splitlines(row.find_element(By.CLASS_NAME, 'name').text)[1]
                 tvl = str.splitlines(row.find_element(By.CLASS_NAME, 'tvl').text)[1]
                 volume = str.splitlines(row.find_element(By.CLASS_NAME, 'volume').text)[1]
                 apr = str.splitlines(row.find_element(By.CLASS_NAME, 'apr').text)[1]
@@ -1573,8 +1576,8 @@ if __name__ == '__main__':
     try:
         # display = Display(visible=0, size=(2400, 2400))
         # display.start()
-        pass
-        # test_joblib()
+        # pass
+        test_joblib()
         # get_data()
     except Exception as e:
         print('test_joblib failed...')
@@ -1598,7 +1601,7 @@ if __name__ == '__main__':
     # res[6] = get_eth_curve_data()  # Done; Browser Needed and Fast API access; # 15s
     # res[7] = get_eth_yfi_data()  # Done; Fast API access;
     # res[8] = get_eth_vesper_data()  # Done; Fast API access
-    res[9] = get_eth_sushi_data_v2()  # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
+    # res[9] = get_eth_sushi_data_v2()  # Done; Browser NEEDED; No METAMASK NEEDED; # 30s
     # res[11] = get_sc_pancakeswap_data()  # Done; Browser NEEDED; No METAMASK NEEDED; # 23s
     # res[12] = get_sc_venus_data()  # Done; Fast API access
     # res[13] = get_sc_autofarm_data()  # Done; Fast API access
